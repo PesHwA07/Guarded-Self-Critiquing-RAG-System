@@ -4,8 +4,8 @@ Both ChatGroq and ChatOllama implement LangChain's BaseChatModel, so downstream
 code (generator, critic, reformulator) never knows which backend is active. Switch
 via the LLM_PROVIDER env var ("groq" or "ollama").
 
-Usage:
-    from src.rag.llm_provider import get_generator_llm, get_critic_llm
+Example:
+    from rag.llm_provider import get_generator_llm, get_critic_llm
 
     llm = get_generator_llm()          # 8B model, fast/cheap
     critic = get_critic_llm()          # 70B model, stronger judgment

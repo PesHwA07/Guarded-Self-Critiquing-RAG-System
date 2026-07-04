@@ -7,7 +7,7 @@ Handles three responsibilities:
 3. **Embedding** — wraps sentence-transformers for local, free embeddings
 
 Usage:
-    from src.rag.embedder import DocumentProcessor, get_embedding_function
+    from rag.embedder import DocumentProcessor, get_embedding_function
 
     processor = DocumentProcessor()
     chunks = processor.load_and_chunk("data/documents/")
