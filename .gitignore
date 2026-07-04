@@ -57,3 +57,9 @@ data/sources/
 
 # Model cache (sentence-transformers downloads)
 model_cache/
+
+# Project planning documents
+implementation_plan*.md
+Combined_LLM_System_Roadmap.md
+task.md
+walkthrough.md
