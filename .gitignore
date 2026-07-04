@@ -31,6 +31,7 @@ desktop.ini
 
 # ChromaDB local storage
 chroma_db/
+data/chroma_db/
 
 # SQLite databases
 *.db
