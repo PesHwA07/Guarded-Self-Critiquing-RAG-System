@@ -56,15 +56,22 @@ def _get_ollama_llm(model: str, temperature: float = 0.0) -> BaseChatModel:
     )
 
 
-def get_generator_llm(temperature: float = 0.0) -> BaseChatModel:
+def get_generator_llm(
+    model: str | None = None,
+    temperature: float = 0.0,
+) -> BaseChatModel:
     """Get the LLM used for answer generation (smaller, faster model).
+
+    Args:
+        model: Override the default model name. If None, uses settings.
+        temperature: LLM temperature (0.0 = deterministic).
 
     - Groq:   llama-3.1-8b-instant (default)
     - Ollama: llama3.1:8b-instruct-q4_K_M (default)
     """
     if settings.llm.provider == "ollama":
-        return _get_ollama_llm(settings.llm.ollama_model, temperature)
-    return _get_groq_llm(settings.llm.groq_generator_model, temperature)
+        return _get_ollama_llm(model or settings.llm.ollama_model, temperature)
+    return _get_groq_llm(model or settings.llm.groq_generator_model, temperature)
 
 
 def get_critic_llm(temperature: float = 0.0) -> BaseChatModel:
