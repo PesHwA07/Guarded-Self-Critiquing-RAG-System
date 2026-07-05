@@ -202,9 +202,15 @@ class LocalEmbeddingFunction:
     The model runs locally (CPU or GPU) — no API key, no cost.
     """
 
+    is_legacy = False
+
     def __init__(self, model_name: str | None = None) -> None:
         self.model_name = model_name or settings.embedding.model_name
         self._model = None
+
+    def name(self) -> str:
+        """ChromaDB protocol: unique name for this embedding function."""
+        return f"local_sentence_transformers_{self.model_name}"
 
     def _ensure_model(self):
         """Lazy-load the sentence-transformers model."""
@@ -218,6 +224,14 @@ class LocalEmbeddingFunction:
         self._ensure_model()
         embeddings = self._model.encode(list(input), show_progress_bar=False)
         return embeddings.tolist()
+
+    def embed_documents(self, documents: list[str]) -> list[list[float]]:
+        """Embed a list of documents (ChromaDB 1.5+ protocol)."""
+        return self(documents)
+
+    def embed_query(self, input: list[str]) -> list[list[float]]:
+        """Embed a query string (ChromaDB 1.5+ protocol)."""
+        return self(input)
 
     @property
     def dimension(self) -> int:

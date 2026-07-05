@@ -17,3 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `scripts/ingest.py` — CLI for ingesting documents into ChromaDB (supports --reset, --dry-run)
 - Python `requests` library docs ingested as the Week 1–3 knowledge base (14 RST files)
 - Unit tests for the document processor (embedder)
+- `src/rag/retriever.py` — ChromaDB-backed vector store with similarity search, dedup, and context formatting
+- `src/rag/generator.py` — LLM answer generator with structured JSON output, source citations, and confidence
+- `src/rag/graph.py` — LangGraph v1 linear pipeline (retrieve → generate), interactive CLI entry point
+- Unit tests for retriever (ingestion, dedup, retrieval, context formatting)
+- Unit tests for generator (JSON parsing, refusal detection, mocked LLM calls)
