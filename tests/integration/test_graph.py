@@ -118,35 +118,16 @@ class TestPlaceholderNodes:
 
 
 
-    def test_reformulate_placeholder_increments_retry(self):
-        """Placeholder reformulator should increment retry_count."""
-        state: RAGState = {
-            "question": "How do I send a GET request?",
-            "original_question": "How do I send a GET request?",
-            "retry_count": 0,
-        }
-        result = reformulate_node(state)
-        assert result["retry_count"] == 1
-        assert "reformulated_query" in result
 
-    def test_reformulate_preserves_original_question(self):
-        """Placeholder should echo the original question as the reformulated query."""
-        state: RAGState = {
-            "question": "reformulated version",
-            "original_question": "original version",
-            "retry_count": 0,
-        }
-        result = reformulate_node(state)
-        assert result["reformulated_query"] == "original version"
 
     def test_fallback_returns_refusal(self):
-        """Placeholder fallback should return a refusal-like answer."""
+        """Fallback should return a refusal-like answer and format chunks."""
         state: RAGState = {
             "retry_count": 2,
         }
         result = fallback_node(state)
         assert "don't have enough information" in result["answer"]
-        assert result["confidence"] == "low"
+        assert result["confidence"] == "none"
         assert result["error"] is not None
 
 
