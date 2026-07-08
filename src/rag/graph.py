@@ -208,22 +208,23 @@ def critic_node(state: RAGState) -> dict[str, Any]:
 def reformulate_node(state: RAGState) -> dict[str, Any]:
     """Reformulate the search query based on the critic's feedback.
 
-    PLACEHOLDER — will be fully implemented in Week 2 Day 3 (reformulator.py).
-    For now, just increments retry_count and echoes the original question.
-
     Reads: ``question``, ``critic_reasoning``, ``retry_count``
     Writes: ``reformulated_query``, ``retry_count``
     """
+    from rag.reformulator import reformulate_query
+
     retry = state.get("retry_count", 0) + 1
     question = state.get("original_question") or state["question"]
+    reasoning = state.get("critic_reasoning", "")
 
-    logger.info(
-        "Reformulating query (attempt %d, placeholder — echoing original)...",
-        retry,
-    )
+    logger.info("Reformulating query (attempt %d)...", retry)
+
+    new_query = reformulate_query(question, reasoning)
+
+    logger.info("New query: '%s'", new_query)
 
     return {
-        "reformulated_query": question,
+        "reformulated_query": new_query,
         "retry_count": retry,
     }
 
@@ -231,26 +232,19 @@ def reformulate_node(state: RAGState) -> dict[str, Any]:
 def fallback_node(state: RAGState) -> dict[str, Any]:
     """Return a graceful degradation response when retries are exhausted.
 
-    PLACEHOLDER — will be fully implemented in Week 2 Day 4 (fallback.py).
-    For now, returns a simple "insufficient information" message.
-
-    Reads: ``retry_count``, ``critic_reasoning``
+    Reads: ``retry_count``, ``retrieved_chunks``
     Writes: ``answer``, ``confidence``, ``error``
     """
+    from rag.fallback import generate_fallback_response
+
     retries = state.get("retry_count", 0)
+    chunks = state.get("retrieved_chunks", [])
     logger.info(
-        "Fallback triggered after %d retries (placeholder).",
+        "Fallback triggered after %d retries.",
         retries,
     )
 
-    return {
-        "answer": (
-            "I don't have enough information in the available documentation "
-            "to answer this question."
-        ),
-        "confidence": "low",
-        "error": f"Exhausted {retries} retries without a grounded answer.",
-    }
+    return generate_fallback_response(chunks, retries)
 
 
 # ------------------------------------------------------------------
