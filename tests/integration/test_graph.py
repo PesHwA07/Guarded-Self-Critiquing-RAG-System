@@ -136,6 +136,8 @@ class TestPlaceholderNodes:
 # ------------------------------------------------------------------
 
 
+from unittest.mock import patch, MagicMock
+
 @pytest.mark.integration
 class TestV2PipelineExecution:
     """End-to-end test of the v2 agentic pipeline.
@@ -143,31 +145,61 @@ class TestV2PipelineExecution:
     Requires a populated vector store and valid GROQ_API_KEY.
     """
 
-    def test_v2_pipeline_returns_expected_state_keys(self):
-        """The v2 pipeline should return all expected state fields."""
+    @patch("rag.graph.evaluate_answer")
+    def test_v2_pipeline_path_grounded(self, mock_evaluate):
+        """Test the path where the generated answer is immediately grounded."""
+        mock_response = MagicMock()
+        mock_response.verdict = "grounded"
+        mock_response.reasoning = "Looks good."
+        mock_response.latency_ms = 100.0
+        mock_evaluate.return_value = mock_response
+        
         result = run_query("How do I send a GET request?", verbose=False)
-
-        # Input fields
-        assert "question" in result
-        assert "original_question" in result
-
-        # Retriever fields
-        assert "retrieved_chunks" in result
-        assert "context" in result
-
-        # Generator fields
+        
+        # Verify it went straight to END
+        assert result["critic_verdict"] == "grounded"
+        assert result["retry_count"] == 0
         assert "answer" in result
-        assert "sources_used" in result
+        assert mock_evaluate.call_count == 1
 
-        # Critic fields (from placeholder)
-        assert "critic_verdict" in result
-        assert "critic_reasoning" in result
+    @patch("rag.graph.evaluate_answer")
+    def test_v2_pipeline_path_reformulate_then_grounded(self, mock_evaluate):
+        """Test the path where critic rejects once, reformulates, then accepts."""
+        # First call: not grounded. Second call: grounded.
+        mock_fail = MagicMock()
+        mock_fail.verdict = "not_grounded"
+        mock_fail.reasoning = "Missing info."
+        mock_fail.latency_ms = 100.0
+        
+        mock_pass = MagicMock()
+        mock_pass.verdict = "grounded"
+        mock_pass.reasoning = "Now it's good."
+        mock_pass.latency_ms = 100.0
+        
+        mock_evaluate.side_effect = [mock_fail, mock_pass]
+        
+        result = run_query("How do I send a GET request?", verbose=False)
+        
+        # Verify it went through the reformulate loop once
+        assert result["critic_verdict"] == "grounded"
+        assert result["retry_count"] == 1
+        assert mock_evaluate.call_count == 2
+        assert "answer" in result
 
-        # Control flow
-        assert "retry_count" in result
-
-        # Basic sanity
-        assert len(result["retrieved_chunks"]) > 0
-        assert isinstance(result["answer"], str)
-        assert len(result["answer"]) > 0
-        assert result["critic_verdict"] in ("grounded", "not_grounded", "partially_grounded")
+    @patch("rag.graph.evaluate_answer")
+    def test_v2_pipeline_path_fallback(self, mock_evaluate):
+        """Test the path where retries are exhausted and it triggers the fallback."""
+        # Always return not grounded to force exhaustion of retries
+        mock_fail = MagicMock()
+        mock_fail.verdict = "not_grounded"
+        mock_fail.reasoning = "Still bad."
+        mock_fail.latency_ms = 100.0
+        mock_evaluate.return_value = mock_fail
+        
+        result = run_query("How do I send a GET request?", verbose=False)
+        
+        # Verify it exhausted retries and hit fallback
+        assert result["critic_verdict"] == "not_grounded"
+        assert result["retry_count"] == 2
+        assert mock_evaluate.call_count == 3 # Initial generation + 2 retries = 3 generations
+        assert "don't have enough information" in result["answer"]

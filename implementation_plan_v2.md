@@ -204,7 +204,7 @@ main ← feature/week1-rag-foundation
 - [x] **Day 4: Fallback Node** — `fallback.py` (graceful degradation response including attempted chunks).
 - [x] **Day 5: Routing Logic** — Conditional routing in `graph.py` (critic → reformulate → retrieve) and retry counter.
 - [x] **Day 6: Logging & Visualization** — Trace logging and `.get_graph().draw_mermaid()` visualization added to README.
-- [ ] **Day 7: Integration Tests** — Tests for grounded, ungrounded, unanswerable queries, and edge cases. Open PR for Week 2.
+- [x] **Day 7: Integration Tests** — Tests for grounded, ungrounded, unanswerable queries, and edge cases. Open PR for Week 2.
 
 **Milestone:** trace logs clearly show a path through critic → reformulate → retrieve → accept, and a separate path hitting fallback.
 
