@@ -34,22 +34,31 @@ Every Git Push
 
 ### RAG Flow (LangGraph)
 
-```
-┌──────────┐     ┌──────────┐     ┌─────────┐
-│ Retrieve │────▶│ Generate │────▶│ Critic  │
-│ (ChromaDB)│    │(Groq 8B) │    │(Groq 70B)│
-└──────────┘     └──────────┘     └────┬────┘
-      ▲                                │
-      │                    ┌───────────┼───────────┐
-      │                    │           │           │
-      │              "not grounded" "grounded"  "retries
-      │              & retries < 2     │        exhausted"
-      │                    │           │           │
-      │              ┌─────▼─────┐  ┌──▼──┐  ┌────▼─────┐
-      └──────────────│Reformulate│  │ Done │  │ Fallback │
-                     │   Query   │  │  ✅  │  │"I don't  │
-                     └───────────┘  └──────┘  │ know" ❌ │
-                                              └──────────┘
+```mermaid
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	retrieve(retrieve)
+	generate(generate)
+	critic(critic)
+	reformulate(reformulate)
+	fallback(fallback)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> retrieve;
+	critic -.-> __end__;
+	critic -.-> fallback;
+	critic -.-> reformulate;
+	generate --> critic;
+	reformulate --> retrieve;
+	retrieve --> generate;
+	fallback --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
 ```
 
 ---
