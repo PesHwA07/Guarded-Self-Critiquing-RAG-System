@@ -336,7 +336,15 @@ def build_graph() -> StateGraph:
     graph.add_edge("generate", "critic")
 
     # critic → conditional routing (grounded/reformulate/fallback)
-    graph.add_conditional_edges("critic", _route_after_critic)
+    graph.add_conditional_edges(
+        "critic", 
+        _route_after_critic,
+        {
+            END: END,
+            "reformulate": "reformulate",
+            "fallback": "fallback",
+        }
+    )
 
     # reformulate loops back to retrieve
     graph.add_edge("reformulate", "retrieve")
