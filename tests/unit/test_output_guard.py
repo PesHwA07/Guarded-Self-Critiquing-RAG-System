@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel
-from guardrails.output_guard import SchemaGuard
+from guardrails.output_guard import SchemaGuard, ToxicityGuard, TopicGuard
 
 class MockResponseSchema(BaseModel):
     answer: str
@@ -32,3 +32,26 @@ def test_schema_guard_markdown_fences():
     raw_output = '''```json\n{"answer": "Here is the answer.", "sources_used": [1], "confidence": "high"}\n```'''
     result = guard.evaluate(raw_output)
     assert result.passed
+
+def test_toxicity_guard_clean():
+    guard = ToxicityGuard()
+    result = guard.evaluate("To make a POST request, use the requests.post() method.")
+    assert result.passed
+
+def test_toxicity_guard_toxic():
+    guard = ToxicityGuard()
+    # A clearly toxic phrase for testing purposes
+    result = guard.evaluate("You are a stupid idiot and I hate you.")
+    assert not result.passed
+    assert "toxic" in result.reason.lower()
+
+def test_topic_guard_on_topic():
+    guard = TopicGuard(allowed_topics=["Python programming", "requests library"])
+    result = guard.evaluate("To make a POST request in Python, you can use requests.post().", "How do I make a POST request?")
+    assert result.passed
+
+def test_topic_guard_off_topic():
+    guard = TopicGuard(allowed_topics=["Python programming", "requests library"])
+    result = guard.evaluate("The best way to cook a steak is medium rare on a charcoal grill.", "How do I cook a steak?")
+    assert not result.passed
+    assert "off-topic" in result.reason.lower()
