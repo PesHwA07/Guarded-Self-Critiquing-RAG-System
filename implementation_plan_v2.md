@@ -212,10 +212,10 @@ main ← feature/week1-rag-foundation
 
 ### Week 3 — Guardrails gateway
 
-- [ ] **Day 1: PII Guard** — `input_guard.py` (Presidio PII detection, configurable action: block/redact/warn).
-- [ ] **Day 2: Injection Guard** — `input_guard.py` (injection/jailbreak detection with regex heuristics + Groq classifier).
-- [ ] **Day 3: Output Schema Guard** — `output_guard.py` (Pydantic schema validation and auto-retry on violation).
-- [ ] **Day 4: Toxicity & Topic Guard** — `output_guard.py` (toxicity check via `toxic-bert` + on-topic check).
+- [x] **Day 1: PII Guard** — `input_guard.py` (Presidio PII detection, configurable action: block/redact/warn).
+- [x] **Day 2: Injection Guard** — `input_guard.py` (injection/jailbreak detection with regex heuristics + Groq classifier).
+- [x] **Day 3: Output Schema Guard** — `output_guard.py` (Pydantic schema validation and auto-retry on violation).
+- [x] **Day 4: Toxicity & Topic Guard** — `output_guard.py` (toxicity check via `toxic-bert` + on-topic check).
 - [ ] **Day 5: Policy Engine** — `policy_engine.py` + `policies.yaml` (YAML-driven rules, editable without touching code).
 - [ ] **Day 6: Graph Integration** — Wire `input_guard` before `retrieve`, and `output_guard` after critic accepts.
 - [ ] **Day 7: Testing** — Unit tests per guardrail and integration test (PII, injection, clean query). Open PR for Week 3.
