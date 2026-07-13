@@ -1,0 +1,22 @@
+# Guardrail Policies Configuration
+
+pii:
+  enabled: true
+  action: redact # options: block, redact, warn
+
+injection:
+  enabled: true
+
+toxicity:
+  enabled: true
+  threshold: 0.5
+
+topics:
+  enabled: true
+  allowed:
+    - "Python programming"
+    - "requests library"
+    - "HTTP requests"
+    - "HTTP methods"
+    - "API requests"
+    - "software engineering"
