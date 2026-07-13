@@ -218,7 +218,7 @@ main ← feature/week1-rag-foundation
 - [x] **Day 4: Toxicity & Topic Guard** — `output_guard.py` (toxicity check via `toxic-bert` + on-topic check).
 - [x] **Day 5: Policy Engine** — `policy_engine.py` + `policies.yaml` (YAML-driven rules, editable without touching code).
 - [x] **Day 6: Graph Integration** — Wire `input_guard` before `retrieve`, and `output_guard` after critic accepts.
-- [ ] **Day 7: Testing** — Unit tests per guardrail and integration test (PII, injection, clean query). Open PR for Week 3.
+- [x] **Day 7: Testing** — Unit tests per guardrail and integration test (PII, injection, clean query). Open PR for Week 3.
 
 **Milestone:** PII, injection, and toxicity test cases are all caught; a clean query passes through untouched.
 
