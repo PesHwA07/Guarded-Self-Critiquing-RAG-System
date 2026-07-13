@@ -48,15 +48,15 @@ class TestGraphStructure:
 class TestRouteAfterCritic:
     """Test the conditional routing logic after the critic node."""
 
-    def test_grounded_routes_to_end(self):
-        """A grounded verdict should route to __end__."""
+    def test_grounded_routes_to_output_guard(self):
+        """A grounded verdict should route to output_guard."""
         state: RAGState = {
             "critic_verdict": "grounded",
             "retry_count": 0,
             "max_retries": DEFAULT_MAX_RETRIES,
         }
         result = _route_after_critic(state)
-        assert result == "__end__"
+        assert result == "output_guard"
 
     def test_not_grounded_with_retries_routes_to_reformulate(self):
         """A not_grounded verdict with retries left should route to reformulate."""
