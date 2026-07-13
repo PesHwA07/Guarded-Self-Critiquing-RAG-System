@@ -35,10 +35,38 @@ from rag.retriever import (
     format_context,
 )
 
+from guardrails.policy_engine import load_policies
+from guardrails.input_guard import PIIGuard, InjectionGuard
+from guardrails.output_guard import ToxicityGuard, TopicGuard
+
 logger = logging.getLogger(__name__)
 
 # Default maximum retries before hitting the fallback path
 DEFAULT_MAX_RETRIES = 2
+
+# ------------------------------------------------------------------
+# Guard Singletons
+# ------------------------------------------------------------------
+_pii_guard = None
+_injection_guard = None
+_toxicity_guard = None
+_topic_guard = None
+_guards_loaded = False
+
+def _get_guards():
+    global _pii_guard, _injection_guard, _toxicity_guard, _topic_guard, _guards_loaded
+    if not _guards_loaded:
+        logger.info("Loading guardrail policies and initializing guards...")
+        policies = load_policies()
+        
+        _pii_guard = PIIGuard(action=policies.pii.action) if policies.pii.enabled else None
+        _injection_guard = InjectionGuard(enabled=policies.injection.enabled)
+        
+        _toxicity_guard = ToxicityGuard(threshold=policies.toxicity.threshold) if policies.toxicity.enabled else None
+        _topic_guard = TopicGuard(allowed_topics=policies.topics.allowed) if policies.topics.enabled else None
+        
+        _guards_loaded = True
+
 
 
 # ------------------------------------------------------------------
@@ -109,6 +137,30 @@ def _get_retriever() -> VectorStoreRetriever:
     if _retriever is None:
         _retriever = VectorStoreRetriever()
     return _retriever
+
+def input_guard_node(state: RAGState) -> dict[str, Any]:
+    """Run input guardrails before retrieval."""
+    question = state["question"]
+    logger.info("Running input guards...")
+    _get_guards()
+    
+    if _injection_guard and _injection_guard.enabled:
+        inj_res = _injection_guard.evaluate(question)
+        if not inj_res.passed:
+            logger.warning(f"Injection blocked: {inj_res.reason}")
+            return {"error": inj_res.reason}
+            
+    if _pii_guard:
+        pii_res = _pii_guard.evaluate(question)
+        if not pii_res.passed:
+            logger.warning(f"PII blocked: {pii_res.reason}")
+            return {"error": pii_res.reason}
+        elif pii_res.modified_text and pii_res.modified_text != question:
+            logger.info("PII redacted from input.")
+            return {"question": pii_res.modified_text, "original_question": pii_res.modified_text}
+            
+    return {}
+
 
 
 def retrieve_node(state: RAGState) -> dict[str, Any]:
@@ -247,15 +299,47 @@ def fallback_node(state: RAGState) -> dict[str, Any]:
     return generate_fallback_response(chunks, retries)
 
 
+def output_guard_node(state: RAGState) -> dict[str, Any]:
+    """Run output guardrails on the final answer."""
+    answer = state.get("answer", "")
+    question = state.get("original_question") or state.get("question", "")
+    logger.info("Running output guards...")
+    _get_guards()
+    
+    if _toxicity_guard:
+        tox_res = _toxicity_guard.evaluate(answer)
+        if not tox_res.passed:
+            logger.warning(f"Toxicity blocked: {tox_res.reason}")
+            return {"error": tox_res.reason, "answer": "Answer blocked due to toxicity policy."}
+            
+    if _topic_guard:
+        top_res = _topic_guard.evaluate(answer, question)
+        if not top_res.passed:
+            logger.warning(f"Topic blocked: {top_res.reason}")
+            return {"error": top_res.reason, "answer": "Answer blocked due to topic policy."}
+            
+    return {}
+
+
 # ------------------------------------------------------------------
 # Routing logic
 # ------------------------------------------------------------------
 
 
+def _route_after_input_guard(state: RAGState) -> str:
+    """Decide what happens after the input guard.
+    
+    If error is set (blocked), go to END. Otherwise proceed to retrieve.
+    """
+    if state.get("error"):
+        return END
+    return "retrieve"
+
+
 def _route_after_critic(state: RAGState) -> str:
     """Decide what happens after the critic evaluates the answer.
 
-    - ``grounded`` → done (go to END)
+    - ``grounded`` → output_guard
     - ``not_grounded`` or ``partially_grounded``:
       - retries left → ``reformulate``
       - retries exhausted → ``fallback``
@@ -266,7 +350,7 @@ def _route_after_critic(state: RAGState) -> str:
 
     if verdict == "grounded":
         logger.info("Critic approved — answer is grounded.")
-        return END
+        return "output_guard"
 
     if retry_count < max_retries:
         logger.info(
@@ -321,15 +405,27 @@ def build_graph() -> StateGraph:
     graph = StateGraph(RAGState)
 
     # --- Nodes ---
+    graph.add_node("input_guard", input_guard_node)
     graph.add_node("retrieve", retrieve_node)
     graph.add_node("generate", generate_node)
     graph.add_node("critic", critic_node)
     graph.add_node("reformulate", reformulate_node)
     graph.add_node("fallback", fallback_node)
+    graph.add_node("output_guard", output_guard_node)
 
     # --- Edges ---
-    # Entry: retrieve
-    graph.set_entry_point("retrieve")
+    # Entry: input_guard
+    graph.set_entry_point("input_guard")
+
+    # input_guard → conditional routing (pass/block)
+    graph.add_conditional_edges(
+        "input_guard",
+        _route_after_input_guard,
+        {
+            END: END,
+            "retrieve": "retrieve",
+        }
+    )
 
     # retrieve → generate → critic
     graph.add_edge("retrieve", "generate")
@@ -340,7 +436,7 @@ def build_graph() -> StateGraph:
         "critic", 
         _route_after_critic,
         {
-            END: END,
+            "output_guard": "output_guard",
             "reformulate": "reformulate",
             "fallback": "fallback",
         }
@@ -349,8 +445,11 @@ def build_graph() -> StateGraph:
     # reformulate loops back to retrieve
     graph.add_edge("reformulate", "retrieve")
 
-    # fallback goes to END
-    graph.add_edge("fallback", END)
+    # fallback goes to output_guard
+    graph.add_edge("fallback", "output_guard")
+
+    # output_guard goes to END
+    graph.add_edge("output_guard", END)
 
     return graph.compile()
 
