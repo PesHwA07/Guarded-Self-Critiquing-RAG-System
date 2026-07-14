@@ -226,8 +226,8 @@ main ← feature/week1-rag-foundation
 
 ### Week 4 — Golden dataset + eval harness
 
-- [ ] **Day 1: Add New Corpus** — Clone `tiangolo/fastapi`, copy tutorial docs, and re-run ingestion.
-- [ ] **Day 2: Base Dataset** — `golden_dataset.json` (30 straightforward factual Q&A pairs across both corpora).
+- [x] **Day 1: Add New Corpus** — Clone `tiangolo/fastapi`, copy tutorial docs, and re-run ingestion.
+- [x] **Day 2: Base Dataset** — `golden_dataset.json` (30 straightforward factual Q&A pairs across both corpora).
 - [ ] **Day 3: Expand Dataset** — Add ambiguous, unanswerable, and adversarial queries to reach 100+ total.
 - [ ] **Day 4: Core Metrics** — `metrics.py` (faithfulness/groundedness and answer relevancy).
 - [ ] **Day 5: Operational Metrics** — `metrics.py` (hallucination rate, latency p50/p95, and cost per query).
