@@ -1,0 +1,152 @@
+[
+  {
+    "query": "What is the standard way to make a GET request in the Requests library?",
+    "expected_answer": "You can make a GET request using the `requests.get()` function, passing the URL as the first argument.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you pass query string parameters to a GET request in Requests?",
+    "expected_answer": "You can pass query string parameters by passing a dictionary to the `params` keyword argument in `requests.get()`.",
+    "category": "factual"
+  },
+  {
+    "query": "How can you get the JSON response from a Requests Response object?",
+    "expected_answer": "You can use the `.json()` method on the Response object to decode the JSON response into a Python dictionary.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you send custom headers with a request?",
+    "expected_answer": "You can send custom headers by passing a dictionary to the `headers` parameter of the request method.",
+    "category": "factual"
+  },
+  {
+    "query": "What property of the Response object gives the HTTP status code?",
+    "expected_answer": "The `.status_code` property of the Response object contains the integer HTTP status code.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you handle timeouts in Requests?",
+    "expected_answer": "Use the `timeout` parameter in the request method, specifying the number of seconds to wait, e.g., `requests.get(url, timeout=5)`.",
+    "category": "factual"
+  },
+  {
+    "query": "How can you disable SSL certificate verification in Requests?",
+    "expected_answer": "Set the `verify` parameter to `False` in the request method, e.g., `requests.get(url, verify=False)`.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you post JSON data in Requests?",
+    "expected_answer": "You can pass a dictionary to the `json` parameter in `requests.post()`, and Requests will automatically serialize it to JSON and set the correct Content-Type header.",
+    "category": "factual"
+  },
+  {
+    "query": "How can you persist cookies across multiple requests?",
+    "expected_answer": "You can use a `requests.Session()` object, which persists cookies and connection pooling across all requests made with it.",
+    "category": "factual"
+  },
+  {
+    "query": "What exception is raised when a request times out in the Requests library?",
+    "expected_answer": "Requests raises a `requests.exceptions.Timeout` exception.",
+    "category": "factual"
+  },
+  {
+    "query": "How can you read the raw response body in Requests?",
+    "expected_answer": "Set `stream=True` in the request method and access the `r.raw` property on the Response object.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you raise an exception for HTTP error statuses (4xx or 5xx) in Requests?",
+    "expected_answer": "Call the `r.raise_for_status()` method on the Response object.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you send a file using Requests?",
+    "expected_answer": "Pass a dictionary containing the file object to the `files` parameter, e.g., `files={'file': open('report.xls', 'rb')}`.",
+    "category": "factual"
+  },
+  {
+    "query": "What is the default encoding used by Requests if none is provided in the headers?",
+    "expected_answer": "Requests will guess the encoding based on the HTTP headers, usually defaulting to ISO-8859-1 for text unless specified.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you inspect the headers of an HTTP response in Requests?",
+    "expected_answer": "You can access the `r.headers` dictionary on the Response object.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you create a basic FastAPI application instance?",
+    "expected_answer": "You can create a FastAPI application instance by importing FastAPI and instantiating it, e.g., `app = FastAPI()`.",
+    "category": "factual"
+  },
+  {
+    "query": "What decorator is used to define a GET endpoint in FastAPI?",
+    "expected_answer": "The `@app.get(\"/path\")` decorator is used, where `app` is the FastAPI instance.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you define a path parameter in FastAPI?",
+    "expected_answer": "Include the parameter in the path string with curly braces, e.g., `/items/{item_id}`, and add it as an argument to the path operation function.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you define a query parameter in FastAPI?",
+    "expected_answer": "Declare a function parameter that is not part of the path template. FastAPI will automatically interpret it as a query parameter.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you declare a request body in FastAPI?",
+    "expected_answer": "Define a Pydantic model by inheriting from `BaseModel` and use it as a type hint for a function parameter in the path operation.",
+    "category": "factual"
+  },
+  {
+    "query": "What command is commonly used to run a FastAPI application during development?",
+    "expected_answer": "The `uvicorn main:app --reload` command is typically used, assuming the app instance is named `app` in a file named `main.py`.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you make a query parameter optional in FastAPI?",
+    "expected_answer": "Provide a default value of `None` for the parameter, or use `Optional[Type]` from the typing module.",
+    "category": "factual"
+  },
+  {
+    "query": "What Pydantic class do you inherit from to create data models for request bodies?",
+    "expected_answer": "You inherit from the `BaseModel` class provided by Pydantic.",
+    "category": "factual"
+  },
+  {
+    "query": "How can you validate a query parameter to have a maximum length in FastAPI?",
+    "expected_answer": "Use the `Query` function from FastAPI as the default value and set the `max_length` parameter, e.g., `q: str = Query(None, max_length=50)`.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you return a custom HTTP status code for a successful response in FastAPI?",
+    "expected_answer": "Set the `status_code` parameter in the path operation decorator, e.g., `@app.post(\"/\", status_code=201)`.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you raise an HTTP error in FastAPI?",
+    "expected_answer": "Raise an `HTTPException` from `fastapi` with the desired `status_code` and `detail` message.",
+    "category": "factual"
+  },
+  {
+    "query": "Where can you view the automatic interactive API documentation for a FastAPI app?",
+    "expected_answer": "FastAPI automatically serves interactive API documentation at the `/docs` (Swagger UI) and `/redoc` (ReDoc) endpoints.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you inject a dependency in a FastAPI endpoint?",
+    "expected_answer": "Use the `Depends()` function from FastAPI in the parameter type hint, e.g., `db: Session = Depends(get_db)`.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you handle file uploads in FastAPI?",
+    "expected_answer": "Use the `File` or `UploadFile` classes from `fastapi` as type hints for the endpoint parameters.",
+    "category": "factual"
+  },
+  {
+    "query": "How do you define a background task in FastAPI?",
+    "expected_answer": "Add a `BackgroundTasks` parameter to the endpoint function and call its `.add_task()` method with the background function and its arguments.",
+    "category": "factual"
+  }
+]
