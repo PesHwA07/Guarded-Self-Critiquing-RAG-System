@@ -115,3 +115,10 @@ Evaluate the relevancy of the answer.
         }
     except Exception as e:
         return {"score": 0.0, "reasoning": f"Evaluation failed: {str(e)}"}
+
+
+def calculate_hallucination_rate(faithfulness_scores: List[float]) -> float:
+    if not faithfulness_scores:
+        return 0.0
+    hallucinated = sum(1 for score in faithfulness_scores if score < 0.5)
+    return hallucinated / len(faithfulness_scores)
