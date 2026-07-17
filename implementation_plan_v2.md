@@ -230,7 +230,7 @@ main ← feature/week1-rag-foundation
 - [x] **Day 2: Base Dataset** — `golden_dataset.json` (30 straightforward factual Q&A pairs across both corpora).
 - [x] **Day 3: Expand Dataset** — Add ambiguous, unanswerable, and adversarial queries to reach 100+ total.
 - [x] **Day 4: Core Metrics** — `metrics.py` (faithfulness/groundedness and answer relevancy).
-- [ ] **Day 5: Operational Metrics** — `metrics.py` (hallucination rate, latency p50/p95, and cost per query).
+- [/] **Day 5: Operational Metrics** — `metrics.py` (hallucination rate, latency p50/p95, and cost per query).
 - [ ] **Day 6: Eval Runner** — `dataset.py` + `runner.py` (load dataset, support `--mode smoke` and `--mode full`).
 - [ ] **Day 7: Reporting** — `reporter.py`, run first full eval to calibrate thresholds, output JSON/console table. Open PR for Week 4.
 
