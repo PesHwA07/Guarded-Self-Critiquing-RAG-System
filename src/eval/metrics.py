@@ -122,3 +122,13 @@ def calculate_hallucination_rate(faithfulness_scores: List[float]) -> float:
         return 0.0
     hallucinated = sum(1 for score in faithfulness_scores if score < 0.5)
     return hallucinated / len(faithfulness_scores)
+
+
+def calculate_latency_percentiles(latencies: List[float]) -> dict:
+    if not latencies:
+        return {"p50": 0.0, "p95": 0.0}
+    sorted_lats = sorted(latencies)
+    n = len(sorted_lats)
+    p50 = sorted_lats[max(0, int(math.ceil(0.50 * n)) - 1)]
+    p95 = sorted_lats[max(0, int(math.ceil(0.95 * n)) - 1)]
+    return {"p50": p50, "p95": p95}
