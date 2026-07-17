@@ -63,3 +63,6 @@ implementation_plan*.md
 Combined_LLM_System_Roadmap.md
 task.md
 walkthrough.md
+
+# Ignore local implementation plans
+implementation_plan_v2.md
