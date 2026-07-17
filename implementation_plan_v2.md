@@ -232,7 +232,7 @@ main ← feature/week1-rag-foundation
 - [x] **Day 4: Core Metrics** — `metrics.py` (faithfulness/groundedness and answer relevancy).
 - [x] **Day 5: Operational Metrics** — `metrics.py` (hallucination rate, latency p50/p95, and cost per query).
 - [x] **Day 6: Eval Runner** — `dataset.py` + `runner.py` (load dataset, support `--mode smoke` and `--mode full`).
-- [ ] **Day 7: Reporting** — `reporter.py`, run first full eval to calibrate thresholds, output JSON/console table. Open PR for Week 4.
+- [x] **Day 7: Reporting** — `reporter.py`, run first full eval to calibrate thresholds, output JSON/console table. Open PR for Week 4.
 
 **Milestone:** eval harness produces a metrics report across 100+ Q&A pairs with calibrated, realistic thresholds.
 
