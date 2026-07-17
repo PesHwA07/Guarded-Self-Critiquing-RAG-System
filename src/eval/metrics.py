@@ -118,6 +118,11 @@ Evaluate the relevancy of the answer.
 
 
 def calculate_hallucination_rate(faithfulness_scores: List[float]) -> float:
+    """Calculate the hallucination rate from a list of faithfulness scores.
+
+    A faithfulness score of 0.0 means the answer contained hallucinated information.
+    Hallucination rate = (count of 0.0 scores) / (total scores).
+    """
     if not faithfulness_scores:
         return 0.0
     hallucinated = sum(1 for score in faithfulness_scores if score < 0.5)
@@ -125,10 +130,51 @@ def calculate_hallucination_rate(faithfulness_scores: List[float]) -> float:
 
 
 def calculate_latency_percentiles(latencies: List[float]) -> dict:
+    """Calculate p50 (median) and p95 latencies.
+
+    Args:
+        latencies: List of latency measurements in seconds.
+
+    Returns:
+        dict: {"p50": float, "p95": float}
+    """
     if not latencies:
         return {"p50": 0.0, "p95": 0.0}
+
     sorted_lats = sorted(latencies)
     n = len(sorted_lats)
-    p50 = sorted_lats[max(0, int(math.ceil(0.50 * n)) - 1)]
-    p95 = sorted_lats[max(0, int(math.ceil(0.95 * n)) - 1)]
+
+    # Calculate p50
+    p50_idx = int(math.ceil(0.50 * n)) - 1
+    p50 = sorted_lats[max(0, p50_idx)]
+
+    # Calculate p95
+    p95_idx = int(math.ceil(0.95 * n)) - 1
+    p95 = sorted_lats[max(0, p95_idx)]
+
     return {"p50": p50, "p95": p95}
+
+
+def calculate_cost(input_tokens: int, output_tokens: int, model: str = "llama-3.1-8b-instant") -> float:
+    """Calculate the estimated API cost based on token usage.
+
+    Args:
+        input_tokens: Number of input/prompt tokens used.
+        output_tokens: Number of output/completion tokens used.
+        model: The model name to look up pricing for.
+
+    Returns:
+        float: The estimated cost in USD.
+    """
+    # Pricing per 1M tokens (Groq free tier has a nominal value, listed here for evaluation realism)
+    pricing = {
+        "llama-3.1-8b-instant": {"input": 0.05, "output": 0.08},
+        "llama-3.3-70b-versatile": {"input": 0.59, "output": 0.79},
+    }
+
+    rates = pricing.get(model, {"input": 0.0, "output": 0.0})
+
+    input_cost = (input_tokens / 1_000_000) * rates["input"]
+    output_cost = (output_tokens / 1_000_000) * rates["output"]
+
+    return input_cost + output_cost
