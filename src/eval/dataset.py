@@ -2,6 +2,7 @@ import json
 import random
 from typing import List
 
+
 def load_dataset(path: str, mode: str = "full", smoke_size: int = 10) -> List[dict]:
     """Load the golden dataset from a JSON file.
 
@@ -15,10 +16,10 @@ def load_dataset(path: str, mode: str = "full", smoke_size: int = 10) -> List[di
     """
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    
+
     if mode == "smoke":
         # Use a fixed seed for deterministic smoke tests
         random.seed(42)
         return random.sample(data, min(smoke_size, len(data)))
-    
+
     return data
