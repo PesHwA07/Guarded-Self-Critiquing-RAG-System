@@ -141,7 +141,7 @@ def ingest(
 
     # ── Step 4: Verify ────────────────────────────────────────────
     stored_count = collection.count()
-    console.print(f"\n[bold green]✅ Ingestion complete![/]")
+    console.print("\n[bold green]✅ Ingestion complete![/]")
     console.print(f"   Documents: {len(sources)}")
     console.print(f"   Chunks stored: {stored_count}")
     console.print(f"   Duration: {duration:.1f}s")
