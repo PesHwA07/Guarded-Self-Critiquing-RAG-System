@@ -12,14 +12,11 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from rag.generator import (
     GeneratorResponse,
     _parse_response,
     generate_answer,
 )
-
 
 # ── TestParseResponse ─────────────────────────────────────────────────
 

@@ -11,11 +11,9 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 from rag.critic import (
-    CriticResponse,
     _parse_response,
     evaluate_answer,
 )
-
 
 # ── TestParseResponse ─────────────────────────────────────────────────
 

@@ -12,13 +12,11 @@ an actual embedding model or ChromaDB.
 
 from __future__ import annotations
 
-import textwrap
 from pathlib import Path
 
 import pytest
 
-from rag.embedder import DocumentProcessor, _SUPPORTED_EXTENSIONS
-
+from rag.embedder import DocumentProcessor
 
 # ── Fixtures ──────────────────────────────────────────────────────────
 

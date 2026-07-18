@@ -1,13 +1,15 @@
 """Unit tests for the fallback module."""
 
 from langchain_core.documents import Document
-from rag.retriever import RetrievalResult
+
 from rag.fallback import generate_fallback_response
+from rag.retriever import RetrievalResult
+
 
 def test_generate_fallback_response_no_chunks():
     """Test fallback when no chunks were retrieved."""
     result = generate_fallback_response([], retries=2)
-    
+
     assert "don't have enough information" in result["answer"]
     assert "I could not find any relevant documents" in result["answer"]
     assert result["confidence"] == "none"
@@ -25,9 +27,9 @@ def test_generate_fallback_response_with_chunks():
             score=0.2
         )
     ]
-    
+
     result = generate_fallback_response(chunks, retries=1)
-    
+
     assert "don't have enough information" in result["answer"]
     assert "here are the excerpts I found" in result["answer"]
     assert "**Source 1: file1.txt**" in result["answer"]

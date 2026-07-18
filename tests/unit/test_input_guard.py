@@ -1,5 +1,5 @@
-import pytest
-from guardrails.input_guard import PIIGuard, InjectionGuard
+from guardrails.input_guard import InjectionGuard, PIIGuard
+
 
 def test_pii_guard_block():
     guard = PIIGuard(action="block")

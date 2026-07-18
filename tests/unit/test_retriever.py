@@ -11,8 +11,6 @@ All tests use a temporary ChromaDB directory so they don't touch real data.
 
 from __future__ import annotations
 
-import tempfile
-
 import pytest
 from langchain_core.documents import Document
 
@@ -21,7 +19,6 @@ from rag.retriever import (
     VectorStoreRetriever,
     format_context,
 )
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────
 
