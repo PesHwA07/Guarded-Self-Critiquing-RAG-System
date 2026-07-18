@@ -1,0 +1,15 @@
+# Evaluation Quality Gate Configuration
+# CI reads these thresholds to decide pass/fail for the eval gate.
+
+thresholds:
+  # Average faithfulness score must be >= this value (0.0 to 1.0)
+  min_faithfulness: 0.6
+
+  # Hallucination rate must be <= this value (0.0 to 1.0, i.e. 15% = 0.15)
+  max_hallucination_rate: 0.15
+
+  # Average relevancy score must be >= this value (0.0 to 1.0)
+  min_relevancy: 0.7
+
+  # p95 latency must be <= this value (in seconds)
+  max_latency_p95_sec: 30.0
