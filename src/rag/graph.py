@@ -27,6 +27,9 @@ from typing import Any, Literal, TypedDict
 
 from langgraph.graph import END, StateGraph
 
+from guardrails.input_guard import InjectionGuard, PIIGuard
+from guardrails.output_guard import TopicGuard, ToxicityGuard
+from guardrails.policy_engine import load_policies
 from rag.critic import evaluate_answer
 from rag.generator import GeneratorResponse, generate_answer
 from rag.retriever import (
@@ -34,10 +37,6 @@ from rag.retriever import (
     VectorStoreRetriever,
     format_context,
 )
-
-from guardrails.policy_engine import load_policies
-from guardrails.input_guard import PIIGuard, InjectionGuard
-from guardrails.output_guard import ToxicityGuard, TopicGuard
 
 logger = logging.getLogger(__name__)
 
@@ -58,13 +57,13 @@ def _get_guards():
     if not _guards_loaded:
         logger.info("Loading guardrail policies and initializing guards...")
         policies = load_policies()
-        
+
         _pii_guard = PIIGuard(action=policies.pii.action) if policies.pii.enabled else None
         _injection_guard = InjectionGuard(enabled=policies.injection.enabled)
-        
+
         _toxicity_guard = ToxicityGuard(threshold=policies.toxicity.threshold) if policies.toxicity.enabled else None
         _topic_guard = TopicGuard(allowed_topics=policies.topics.allowed) if policies.topics.enabled else None
-        
+
         _guards_loaded = True
 
 
@@ -143,13 +142,13 @@ def input_guard_node(state: RAGState) -> dict[str, Any]:
     question = state["question"]
     logger.info("Running input guards...")
     _get_guards()
-    
+
     if _injection_guard and _injection_guard.enabled:
         inj_res = _injection_guard.evaluate(question)
         if not inj_res.passed:
             logger.warning(f"Injection blocked: {inj_res.reason}")
             return {"error": inj_res.reason}
-            
+
     if _pii_guard:
         pii_res = _pii_guard.evaluate(question)
         if not pii_res.passed:
@@ -158,7 +157,7 @@ def input_guard_node(state: RAGState) -> dict[str, Any]:
         elif pii_res.modified_text and pii_res.modified_text != question:
             logger.info("PII redacted from input.")
             return {"question": pii_res.modified_text, "original_question": pii_res.modified_text}
-            
+
     return {}
 
 
@@ -248,7 +247,7 @@ def critic_node(state: RAGState) -> dict[str, Any]:
         "critic_verdict": response.verdict,
         "critic_reasoning": response.reasoning,
     }
-    
+
     # Optional: We could sum latencies or keep them separate.
     # We will just write any errors if they occurred.
     if response.error:
@@ -305,19 +304,19 @@ def output_guard_node(state: RAGState) -> dict[str, Any]:
     question = state.get("original_question") or state.get("question", "")
     logger.info("Running output guards...")
     _get_guards()
-    
+
     if _toxicity_guard:
         tox_res = _toxicity_guard.evaluate(answer)
         if not tox_res.passed:
             logger.warning(f"Toxicity blocked: {tox_res.reason}")
             return {"error": tox_res.reason, "answer": "Answer blocked due to toxicity policy."}
-            
+
     if _topic_guard:
         top_res = _topic_guard.evaluate(answer, question)
         if not top_res.passed:
             logger.warning(f"Topic blocked: {top_res.reason}")
             return {"error": top_res.reason, "answer": "Answer blocked due to topic policy."}
-            
+
     return {}
 
 
@@ -328,7 +327,7 @@ def output_guard_node(state: RAGState) -> dict[str, Any]:
 
 def _route_after_input_guard(state: RAGState) -> str:
     """Decide what happens after the input guard.
-    
+
     If error is set (blocked), go to END. Otherwise proceed to retrieve.
     """
     if state.get("error"):
@@ -433,7 +432,7 @@ def build_graph() -> StateGraph:
 
     # critic → conditional routing (grounded/reformulate/fallback)
     graph.add_conditional_edges(
-        "critic", 
+        "critic",
         _route_after_critic,
         {
             "output_guard": "output_guard",
