@@ -1,18 +1,14 @@
 import pytest
+
 from rag.graph import (
+    DEFAULT_MAX_RETRIES,
+    RAGState,
+    _route_after_critic,
     build_graph,
     build_graph_v1,
-    run_query,
-    RAGState,
-    retrieve_node,
-    generate_node,
-    critic_node,
-    reformulate_node,
     fallback_node,
-    _route_after_critic,
-    DEFAULT_MAX_RETRIES,
+    run_query,
 )
-
 
 # ------------------------------------------------------------------
 # Graph structure tests
@@ -136,7 +132,8 @@ class TestPlaceholderNodes:
 # ------------------------------------------------------------------
 
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 
 @pytest.mark.integration
 class TestV2PipelineExecution:
@@ -153,9 +150,9 @@ class TestV2PipelineExecution:
         mock_response.reasoning = "Looks good."
         mock_response.latency_ms = 100.0
         mock_evaluate.return_value = mock_response
-        
+
         result = run_query("How do I send a GET request?", verbose=False)
-        
+
         # Verify it went straight to END
         assert result["critic_verdict"] == "grounded"
         assert result["retry_count"] == 0
@@ -170,16 +167,16 @@ class TestV2PipelineExecution:
         mock_fail.verdict = "not_grounded"
         mock_fail.reasoning = "Missing info."
         mock_fail.latency_ms = 100.0
-        
+
         mock_pass = MagicMock()
         mock_pass.verdict = "grounded"
         mock_pass.reasoning = "Now it's good."
         mock_pass.latency_ms = 100.0
-        
+
         mock_evaluate.side_effect = [mock_fail, mock_pass]
-        
+
         result = run_query("How do I send a GET request?", verbose=False)
-        
+
         # Verify it went through the reformulate loop once
         assert result["critic_verdict"] == "grounded"
         assert result["retry_count"] == 1
@@ -195,9 +192,9 @@ class TestV2PipelineExecution:
         mock_fail.reasoning = "Still bad."
         mock_fail.latency_ms = 100.0
         mock_evaluate.return_value = mock_fail
-        
+
         result = run_query("How do I send a GET request?", verbose=False)
-        
+
         # Verify it exhausted retries and hit fallback
         assert result["critic_verdict"] == "not_grounded"
         assert result["retry_count"] == 2
