@@ -5,7 +5,6 @@ was insufficient, and produces an improved search query to retrieve better conte
 """
 
 import logging
-import time
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
@@ -48,12 +47,12 @@ def reformulate_query(question: str, critic_reasoning: str) -> str:
             "reasoning": critic_reasoning,
         })
         new_query = new_query.strip(" '\"\n")
-        
+
         # Fallback if the LLM returned nothing
         if not new_query:
             logger.warning("Reformulator returned empty query. Falling back to original.")
             return question
-            
+
         return new_query
     except Exception as e:
         logger.error("LLM error during query reformulation: %s", e)
