@@ -155,20 +155,44 @@ guarded-rag-system/
 ├── tests/                     # Unit + integration tests
 ├── scripts/                   # CLI tools
 ├── docs/                      # Documentation + learning journal
-└── .github/workflows/         # CI/CD pipelines
+└── .github/workflows/         # CI/CD pipelines (Lint, Unit Tests, Eval Gate)
 ```
+
+---
+
+## CI/CD and Branch Protection
+
+This project uses a rigorous CI/CD pipeline implemented via GitHub Actions:
+
+- **Continuous Integration (`ci.yml`)**: Runs on every push and PR. Executes `ruff check` for linting and `pytest` for all unit tests. Uses dependency caching to run in <1 minute.
+- **Eval Gate (`eval-gate.yml`)**: A data-driven quality gate.
+  - On every push: runs a fast "smoke test" evaluation (10 queries).
+  - On PRs to `main`: runs the full golden dataset (100+ queries).
+  - Validates metrics against `data/eval_config.yaml` thresholds (Faithfulness, Relevancy, Hallucination Rate, Latency p95).
+  - Stores historical results in a local SQLite DB, viewable via `python scripts/trend.py`.
+
+### Branch Protection Strategy
+To ensure quality, the `main` branch should be protected on GitHub:
+1. Go to **Settings > Branches > Add branch ruleset**.
+2. Target the `main` branch.
+3. Check **Require status checks to pass before merging**.
+4. Add the following required checks:
+   - `lint-and-test` (from `ci.yml`)
+   - `eval-gate` (from `eval-gate.yml`)
+5. This guarantees no untested or regressing code (e.g. prompt changes that increase hallucination rate above 15%) can be merged.
 
 ---
 
 ## Development Status
 
-- [x] 📁 Week 1: Project scaffold
-- [ ] 🔗 Week 1: Linear RAG pipeline
-- [ ] 🤖 Week 2: Agentic self-critiquing graph
-- [ ] 🛡️ Week 3: Guardrails gateway
-- [ ] 📊 Week 4: Golden dataset + eval harness
-- [ ] ⚙️ Week 5: CI/CD automation
+- [x] 📁 Week 1: Project scaffold & Linear RAG pipeline
+- [x] 🤖 Week 2: Agentic self-critiquing graph
+- [x] 🛡️ Week 3: Guardrails gateway
+- [x] 📊 Week 4: Golden dataset + eval harness
+- [x] ⚙️ Week 5: CI/CD automation & SQLite Result Storage
 - [ ] 📈 Week 6: Dashboard + polish
+- [ ] 🧠 Week 7: Vector database depth + MLOps tracking
+- [ ] 🚀 Week 8: Dockerize + deploy
 
 ---
 
