@@ -23,7 +23,7 @@ import chromadb
 from langchain_core.documents import Document
 
 from config import settings
-from rag.embedder import get_embedding_function, LocalEmbeddingFunction
+from rag.embedder import LocalEmbeddingFunction, get_embedding_function
 
 logger = logging.getLogger(__name__)
 
