@@ -57,10 +57,12 @@ def evaluate_faithfulness(query: str, contexts: List[str], answer: str) -> dict:
 
     context_str = "\n\n".join(contexts) if contexts else "NO CONTEXT PROVIDED."
 
-    prompt = f"""You are an expert evaluator. Your task is to determine if the given Answer is perfectly faithful to the provided Context.
+    prompt = f"""You are an expert evaluator. Your task is to determine if the given Answer
+is perfectly faithful to the provided Context.
 
 An answer is FAITHFUL if all claims made in the answer can be directly inferred from the context.
-An answer is NOT FAITHFUL if it includes hallucinated information, external knowledge not present in the context, or contradicts the context.
+An answer is NOT FAITHFUL if it includes hallucinated information, external knowledge
+not present in the context, or contradicts the context.
 
 Query: {query}
 
@@ -95,7 +97,8 @@ def evaluate_relevancy(query: str, answer: str) -> dict:
     llm = get_critic_llm(temperature=0.0)
     structured_llm = llm.with_structured_output(RelevancyScore)
 
-    prompt = f"""You are an expert evaluator. Your task is to determine if the given Answer directly addresses the Query.
+    prompt = f"""You are an expert evaluator. Your task is to determine if the given Answer
+directly addresses the Query.
 
 An answer is RELEVANT if it provides a direct, helpful, and accurate response to the user's query.
 An answer is NOT RELEVANT if it is evasive, talks about unrelated topics, or fails to answer the core question.
