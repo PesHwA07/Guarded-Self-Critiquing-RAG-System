@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, patch
+
 from pydantic import BaseModel
 
 from guardrails.output_guard import SchemaGuard, TopicGuard, ToxicityGuard
@@ -46,13 +48,23 @@ def test_toxicity_guard_toxic():
     assert not result.passed
     assert "toxic" in result.reason.lower()
 
-def test_topic_guard_on_topic():
+@patch("guardrails.output_guard.get_generator_llm")
+def test_topic_guard_on_topic(mock_get_llm):
+    mock_llm = MagicMock()
+    mock_llm.invoke.return_value = MagicMock(content='{"is_allowed": true, "reason": "looks good"}')
+    mock_get_llm.return_value = mock_llm
+
     guard = TopicGuard(allowed_topics=["Python programming", "requests library"])
     answer = "To make a POST request in Python, you can use requests.post()."
     result = guard.evaluate(answer, "How do I make a POST request?")
     assert result.passed
 
-def test_topic_guard_off_topic():
+@patch("guardrails.output_guard.get_generator_llm")
+def test_topic_guard_off_topic(mock_get_llm):
+    mock_llm = MagicMock()
+    mock_llm.invoke.return_value = MagicMock(content='{"is_allowed": false, "reason": "completely off-topic"}')
+    mock_get_llm.return_value = mock_llm
+
     guard = TopicGuard(allowed_topics=["Python programming", "requests library"])
     answer = "The best way to cook a steak is medium rare on a charcoal grill."
     result = guard.evaluate(answer, "How do I cook a steak?")

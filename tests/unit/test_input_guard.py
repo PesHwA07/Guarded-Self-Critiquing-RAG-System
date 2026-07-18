@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, patch
+
 from guardrails.input_guard import InjectionGuard, PIIGuard
 
 
@@ -27,7 +29,12 @@ def test_injection_guard_heuristic_block():
     assert not result.passed
     assert "heuristic triggered" in result.reason
 
-def test_injection_guard_clean():
+@patch("guardrails.input_guard.get_generator_llm")
+def test_injection_guard_clean(mock_get_llm):
+    mock_llm = MagicMock()
+    mock_llm.invoke.return_value = MagicMock(content="safe")
+    mock_get_llm.return_value = mock_llm
+
     guard = InjectionGuard()
     result = guard.evaluate("How do I make a POST request in Python?")
     assert result.passed
