@@ -1,6 +1,8 @@
 from pathlib import Path
+
 import yaml
 from pydantic import BaseModel, Field
+
 
 class PIIPolicy(BaseModel):
     enabled: bool = True
@@ -34,8 +36,8 @@ def load_policies(path: str | Path = "data/policies.yaml") -> GuardrailPolicies:
             policy_path = root_policy_path
         else:
             return GuardrailPolicies()
-            
+
     with open(policy_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
-        
+
     return GuardrailPolicies(**(data or {}))
