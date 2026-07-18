@@ -1,5 +1,6 @@
 from rag.graph import run_query
 
+
 def main():
     print("Testing clean query...")
     res = run_query("How do I make a POST request in Python?")
