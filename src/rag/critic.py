@@ -12,9 +12,9 @@ Usage:
     retriever = VectorStoreRetriever()
     results = retriever.retrieve("How do I send a POST request?")
     context = format_context(results)
-    
+
     # ... generate answer ...
-    
+
     response = evaluate_answer("How do I send a POST request?", answer_text, context)
     print(response.verdict)
     print(response.reasoning)
@@ -53,9 +53,12 @@ Your task is to determine if all claims made in the ANSWER are fully supported b
 Do not evaluate if the answer is factually true in the real world, ONLY if it is supported by the provided CONTEXT.
 
 Rules for verdicts:
-- "grounded": All claims in the answer are supported by the context. Or, the answer correctly states that it doesn't have enough information based on the context.
-- "not_grounded": The answer makes claims that contradict the context, or makes up significant new information not present in the context.
-- "partially_grounded": The answer is mostly correct but includes some unverified details or misses critical caveats present in the context.
+- "grounded": All claims in the answer are supported by the context. Or, the answer correctly
+  states that it doesn't have enough information based on the context.
+- "not_grounded": The answer makes claims that contradict the context, or makes up significant
+  new information not present in the context.
+- "partially_grounded": The answer is mostly correct but includes some unverified details
+  or misses critical caveats present in the context.
 
 You MUST respond with valid JSON in exactly this format:
 {
@@ -175,7 +178,7 @@ def _parse_response(raw: str, latency_ms: float) -> CriticResponse:
 
     try:
         data = json.loads(cleaned)
-        
+
         verdict = data.get("verdict", "grounded")
         if verdict not in ("grounded", "not_grounded", "partially_grounded"):
             logger.warning("Invalid verdict from critic: %s. Defaulting to grounded.", verdict)
