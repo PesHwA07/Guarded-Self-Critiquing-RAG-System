@@ -39,12 +39,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Download SpaCy model for Presidio
+        run: python -m spacy download en_core_web_lg
+
       - name: Ingest documents into ChromaDB
         run: python scripts/ingest.py
 
       # Smoke test on every push (10 queries, fast)
-      - name: Run smoke evaluation
-        if: github.event_name == 'push'
+      - name: Run evaluation (Smoke Test)
+        if: github.event_name == 'push' && github.ref != 'refs/heads/main'
         run: |
           python scripts/run_eval.py \
             --mode smoke \

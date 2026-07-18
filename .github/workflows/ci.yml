@@ -38,5 +38,8 @@ jobs:
       - name: Lint with ruff
         run: ruff check src/ tests/
 
+      - name: Download SpaCy model for Presidio
+        run: python -m spacy download en_core_web_lg
+
       - name: Run unit tests
         run: pytest tests/unit/ -v --tb=short
