@@ -17,3 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Comprehensive unit and integration test suites covering the entire pipeline.
 
 ### Changed
+- Refactored `retriever.py` to support fallback responses gracefully when documents don't match.
+- Switched default Generator to `llama-3.1-8b-instant` and Critic to `llama-3.3-70b-versatile` on Groq.
+
+### Fixed
+- Addressed Streamlit deprecation warnings for `use_container_width`.
