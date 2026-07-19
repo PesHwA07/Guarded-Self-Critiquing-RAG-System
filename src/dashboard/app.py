@@ -112,3 +112,23 @@ else:
             with chart_col2:
                 st.markdown("**Latency (p95) Trend (sec)**")
                 st.line_chart(df_charts["latency_p95_sec"], height=250)
+                
+                st.markdown("**Query Success Rate**")
+                # Calculate pass rate
+                df_charts["pass_rate"] = (df_charts["successful_queries"] / df_charts["total_queries"]) * 100
+                st.line_chart(df_charts["pass_rate"], height=250)
+        else:
+            st.info("Not enough data to display trends.")
+
+    with tab2:
+        st.subheader("Evaluation History (Raw Data)")
+        
+        # Select a subset of columns to keep it readable
+        cols_to_show = [
+            'id', 'timestamp', 'mode', 'branch', 
+            'successful_queries', 'total_queries', 'hallucination_rate', 
+            'average_relevancy', 'latency_p95_sec', 'cost_per_query'
+        ]
+        
+        # Only pick columns that actually exist in the dataframe
+        existing_cols = [c for c in cols_to_show if c in df_evals.columns]
