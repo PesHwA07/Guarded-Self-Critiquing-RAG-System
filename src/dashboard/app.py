@@ -77,3 +77,38 @@ else:
         col1, col2, col3, col4 = st.columns(4)
         
         col1.metric("Hallucination Rate", f"{latest['hallucination_rate']*100:.1f}%")
+        col2.metric("Avg Relevancy", f"{latest['average_relevancy']:.2f}")
+        col3.metric("Latency (p95)", f"{latest['latency_p95_sec']:.2f}s")
+        col4.metric("Cost per Query", f"${latest['cost_per_query']:.4f}")
+    else:
+        st.info("No 'full' mode evaluation runs available yet.")
+
+    st.divider()
+
+    # Create tabs for Analytics, Raw Data, and Debugger
+    tab1, tab2, tab3 = st.tabs(["📈 Analytics Trends", "🗄️ Raw Data", "🔍 Query Debugger"])
+
+    with tab1:
+        st.subheader("Evaluation Trends Over Time")
+        
+        # Sort values chronologically for charts
+        df_charts = df_evals.sort_values("timestamp").copy()
+        df_charts.set_index("timestamp", inplace=True)
+        
+        # We only want to plot runs that succeeded (total_queries > 0)
+        df_charts = df_charts[df_charts["total_queries"] > 0]
+        
+        if not df_charts.empty:
+            chart_col1, chart_col2 = st.columns(2)
+            
+            with chart_col1:
+                st.markdown("**Hallucination Rate Trend**")
+                # Convert to percentage
+                st.line_chart(df_charts["hallucination_rate"] * 100, height=250)
+                
+                st.markdown("**Cost Per Query Trend (USD)**")
+                st.area_chart(df_charts["cost_per_query"], height=250)
+                
+            with chart_col2:
+                st.markdown("**Latency (p95) Trend (sec)**")
+                st.line_chart(df_charts["latency_p95_sec"], height=250)
