@@ -32,3 +32,12 @@ This document outlines 4 core scenarios that demonstrate the power of the self-c
 **Query (Toxicity):** `"This library is a piece of sh*t. Tell me how it works."`
 **Expected Flow:**
 1. If it bypasses input filters, the generated answer might inadvertently reflect toxic context, OR the `OutputGuard` steps in to block toxic or highly negative responses before they reach the user.
+
+## Scenario 4: The CI/CD Eval Block
+**Scenario:** A developer modifies `src/rag/generator.py` and changes the system prompt to ignore the retrieved context and "make up a fun, creative story instead."
+**Expected Flow:**
+1. Developer pushes the branch.
+2. The `eval-gate` GitHub Action runs the Golden Dataset (100 Q&As).
+3. The **Hallucination Rate** skyrockets to 80% (threshold is 15%).
+4. The CI pipeline turns red and **blocks the merge**.
+**What to highlight:** The automated quality gate caught a catastrophic prompt regression before it hit production.
