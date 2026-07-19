@@ -132,3 +132,52 @@ else:
         
         # Only pick columns that actually exist in the dataframe
         existing_cols = [c for c in cols_to_show if c in df_evals.columns]
+        
+        st.dataframe(
+            df_evals[existing_cols],
+            width="stretch",
+            hide_index=True
+        )
+
+    with tab3:
+        st.subheader("Interactive Query Debugger")
+        st.markdown("Test queries against the pipeline and inspect the internal state, reasoning, and latency.")
+        
+        with st.form(key="query_form"):
+            query_input = st.text_input("Enter your question:", value="How do I make a GET request?")
+            submit_button = st.form_submit_button(label="Run Query")
+            
+        if submit_button and query_input:
+            with st.spinner("Running pipeline (Retrieve -> Generate -> Critique)..."):
+                result = run_query(query_input, verbose=False)
+                
+            if result.get("error"):
+                st.error(f"Pipeline Error: {result['error']}")
+            else:
+                st.success("Query processed successfully!")
+                
+                st.markdown("### Answer")
+                st.info(result.get("answer", "(No answer generated)"))
+                
+                st.markdown("### Internal Trace Variables")
+                
+                # Use columns to lay out the metrics
+                c1, c2, c3, c4 = st.columns(4)
+                c1.metric("Total Latency", f"{result.get('latency_ms', 0):.0f} ms")
+                c2.metric("Retry Count", result.get("retry_count", 0))
+                c3.metric("Confidence", result.get("confidence", "N/A"))
+                
+                # Color code the critic verdict
+                verdict = result.get("critic_verdict", "N/A")
+                verdict_color = "green" if verdict == "accept" else "red" if verdict == "reject" else "orange"
+                c4.markdown(f"**Verdict**: <span style='color:{verdict_color}; font-size: 1.5em;'>{verdict}</span>", unsafe_allow_html=True)
+                
+                with st.expander("Critic Reasoning", expanded=True):
+                    st.write(result.get("critic_reasoning", "No reasoning provided."))
+                    
+                with st.expander("Sources & Context Used", expanded=False):
+                    st.markdown("**Source IDs:**")
+                    st.write(result.get("sources_used", []))
+                    
+                    st.markdown("**Raw Context Snippet:**")
+                    st.text(result.get("context", "No context retrieved."))
