@@ -475,7 +475,15 @@ def run_query(
         The final RAGState dict with answer, sources, confidence, etc.
     """
     if verbose:
-        logging.basicConfig(level=logging.INFO, format="%(message)s")
+        from telemetry import setup_telemetry
+        setup_telemetry(json_format=False, level=logging.INFO)
+    else:
+        # Default for production: JSON telemetry
+        from telemetry import setup_telemetry
+        setup_telemetry(json_format=True, level=logging.INFO)
+        
+    logger.info("Starting run_query pipeline", extra={"metadata": {"question": question}})
+
 
     graph = build_graph()
 
@@ -502,10 +510,9 @@ def main() -> None:
     """Interactive CLI for asking questions against the RAG pipeline."""
     import sys
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(message)s",
-    )
+    from telemetry import setup_telemetry
+    # Interactive CLI should remain readable text, not JSON
+    setup_telemetry(json_format=False, level=logging.INFO)
 
     print("=" * 60)
     print("Guarded RAG System - v2 (agentic self-critiquing pipeline)")
