@@ -138,3 +138,63 @@ guarded-rag-system/
 │   │   ├── retriever.py       # Vector search
 │   │   ├── generator.py       # Answer generation
 │   │   ├── critic.py          # Self-critique (70B model)
+│   │   ├── reformulator.py    # Query reformulation
+│   │   ├── fallback.py        # Graceful "I don't know"
+│   │   └── graph.py           # LangGraph wiring
+│   ├── guardrails/
+│   │   ├── input_guard.py     # PII, injection, jailbreak
+│   │   ├── output_guard.py    # Schema, toxicity, on-topic
+│   │   └── policy_engine.py   # YAML policy loader
+│   ├── eval/
+│   │   ├── metrics.py         # Faithfulness, hallucination, latency
+│   │   ├── runner.py          # Eval runner (smoke/full modes)
+│   │   └── reporter.py        # Metrics reporting
+│   └── dashboard/
+│       └── app.py             # Streamlit dashboard
+├── data/
+│   ├── documents/             # Source docs (requests + FastAPI)
+│   ├── golden_dataset.json    # 100+ eval Q&A pairs
+│   └── policies.yaml          # Guardrail config
+├── tests/                     # Unit + integration tests
+├── scripts/                   # CLI tools
+├── docs/                      # Documentation + learning journal
+└── .github/workflows/         # CI/CD pipelines (Lint, Unit Tests, Eval Gate)
+```
+
+---
+
+## CI/CD and Branch Protection
+
+This project uses a rigorous CI/CD pipeline implemented via GitHub Actions:
+
+- **Continuous Integration (`ci.yml`)**: Runs on every push and PR. Executes `ruff check` for linting and `pytest` for all unit tests. Uses dependency caching to run in <1 minute.
+- **Eval Gate (`eval-gate.yml`)**: A data-driven quality gate.
+  - On every push: runs a fast "smoke test" evaluation (10 queries).
+  - On PRs to `main`: runs the full golden dataset (100+ queries).
+  - Validates metrics against `data/eval_config.yaml` thresholds (Faithfulness, Relevancy, Hallucination Rate, Latency p95).
+  - Stores historical results in a local SQLite DB, viewable via `python scripts/trend.py`.
+
+### Branch Protection Strategy
+To ensure quality, the `main` branch should be protected on GitHub:
+1. Go to **Settings > Branches > Add branch ruleset**.
+2. Target the `main` branch.
+3. Check **Require status checks to pass before merging**.
+4. Add the following required checks:
+   - `lint-and-test` (from `ci.yml`)
+   - `eval-gate` (from `eval-gate.yml`)
+5. This guarantees no untested or regressing code (e.g. prompt changes that increase hallucination rate above 15%) can be merged.
+
+---
+
+## 📈 Dashboard & Telemetry
+
+You can track the performance of the system visually using the **Streamlit Dashboard**:
+```bash
+python -m streamlit run src/dashboard/app.py
+```
+**Features:**
+- **Analytics Trends:** Visual line and area charts tracking hallucination rates, latencies (p95), cost per query, and success rates across your historical commits.
+- **Raw Data:** Access to the underlying SQLite records for every eval run.
+- **Query Debugger:** An interactive testing ground where you can input queries, see the LangGraph pipeline execute, and inspect the internal tracing (Critic verdicts, retries, source context, and latency).
+
+The pipeline also uses built-in **structured JSON logging** via `src/telemetry.py`, making it production-ready for log aggregation systems like Datadog or ELK.
