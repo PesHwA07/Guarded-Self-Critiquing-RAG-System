@@ -38,3 +38,16 @@ def load_eval_data(db_path: Path) -> pd.DataFrame:
         conn.close()
         
         # Convert timestamp strings to datetime objects
+        if not df.empty and 'timestamp' in df.columns:
+            df['timestamp'] = pd.to_datetime(df['timestamp'])
+            
+        return df
+    except Exception as e:
+        st.error(f"Error loading evaluation data: {e}")
+        return pd.DataFrame()
+
+# --- Layout ---
+st.title("🛡️ Guarded RAG System Dashboard")
+st.markdown("""
+Welcome to the Guarded RAG System Dashboard. 
+This dashboard tracks the evaluation metrics and pipeline health of our self-critiquing AI system.
