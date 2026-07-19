@@ -51,3 +51,29 @@ st.title("🛡️ Guarded RAG System Dashboard")
 st.markdown("""
 Welcome to the Guarded RAG System Dashboard. 
 This dashboard tracks the evaluation metrics and pipeline health of our self-critiquing AI system.
+""")
+
+st.sidebar.header("Dashboard Controls")
+st.sidebar.markdown("Use this sidebar to filter or refresh data.")
+
+if st.sidebar.button("🔄 Refresh Data"):
+    st.cache_data.clear()
+
+# Load the data
+with st.spinner("Loading evaluation history..."):
+    df_evals = load_eval_data(DB_PATH)
+
+if df_evals.empty:
+    st.info("No evaluation data found. Run an evaluation to populate the database.")
+else:
+    # --- Quick Stats ---
+    st.subheader("Latest Evaluation Run (Full Mode)")
+    
+    # Get the latest 'full' eval run
+    full_runs = df_evals[df_evals['mode'] == 'full']
+    if not full_runs.empty:
+        latest = full_runs.iloc[0]
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        col1.metric("Hallucination Rate", f"{latest['hallucination_rate']*100:.1f}%")
