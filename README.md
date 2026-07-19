@@ -198,3 +198,44 @@ python -m streamlit run src/dashboard/app.py
 - **Query Debugger:** An interactive testing ground where you can input queries, see the LangGraph pipeline execute, and inspect the internal tracing (Critic verdicts, retries, source context, and latency).
 
 The pipeline also uses built-in **structured JSON logging** via `src/telemetry.py`, making it production-ready for log aggregation systems like Datadog or ELK.
+
+---
+
+## 🛡️ Extending Guardrail Policies
+
+The RAG system uses a YAML-driven policy engine (`data/policies.yaml`) so you can tweak rules without modifying Python code.
+
+To extend the system, simply edit `data/policies.yaml`:
+```yaml
+# Add a new allowed topic for the TopicGuard
+topics:
+  enabled: true
+  allowed:
+    - "Python programming"
+    - "New Topic Here"
+
+# Adjust Toxicity threshold (lower = stricter)
+toxicity:
+  enabled: true
+  threshold: 0.4
+```
+The graph will automatically pick up these changes on the next query.
+
+---
+
+## Development Status
+
+- [x] 📁 Week 1: Project scaffold & Linear RAG pipeline
+- [x] 🤖 Week 2: Agentic self-critiquing graph
+- [x] 🛡️ Week 3: Guardrails gateway
+- [x] 📊 Week 4: Golden dataset + eval harness
+- [x] ⚙️ Week 5: CI/CD automation & SQLite Result Storage
+- [x] 📈 Week 6: Dashboard + polish
+- [ ] 🧠 Week 7: Vector database depth + MLOps tracking
+- [ ] 🚀 Week 8: Dockerize + deploy
+
+---
+
+## License
+
+MIT
