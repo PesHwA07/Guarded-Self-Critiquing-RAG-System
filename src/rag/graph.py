@@ -34,7 +34,8 @@ from rag.critic import evaluate_answer
 from rag.generator import GeneratorResponse, generate_answer
 from rag.retriever import (
     RetrievalResult,
-    VectorStoreRetriever,
+    BaseRetriever,
+    get_retriever,
     format_context,
 )
 
@@ -127,14 +128,14 @@ class RAGState(TypedDict, total=False):
 # ------------------------------------------------------------------
 
 # Module-level retriever singleton (lazy-initialized)
-_retriever: VectorStoreRetriever | None = None
+_retriever: BaseRetriever | None = None
 
 
-def _get_retriever() -> VectorStoreRetriever:
+def _get_retriever() -> BaseRetriever:
     """Lazy-init the retriever singleton."""
     global _retriever
     if _retriever is None:
-        _retriever = VectorStoreRetriever()
+        _retriever = get_retriever()
     return _retriever
 
 def input_guard_node(state: RAGState) -> dict[str, Any]:
