@@ -77,6 +77,10 @@ class ChunkingConfig:
 class RetrieverConfig:
     """Vector store retrieval settings."""
 
+    vector_store: Literal["chroma", "qdrant"] = field(
+        default_factory=lambda: _env("VECTOR_STORE", "chroma")  # type: ignore[arg-type]
+    )
+    
     top_k: int = field(default_factory=lambda: _env_int("TOP_K", 5))
     collection_name: str = field(
         default_factory=lambda: _env("CHROMA_COLLECTION", "rag_documents")
@@ -87,6 +91,8 @@ class RetrieverConfig:
             str(_PROJECT_ROOT / "data" / "chroma_db"),
         )
     )
+    qdrant_url: str = field(default_factory=lambda: _env("QDRANT_URL"))
+    qdrant_api_key: str = field(default_factory=lambda: _env("QDRANT_API_KEY"))
 
 
 @dataclass(frozen=True)
@@ -94,6 +100,16 @@ class RAGConfig:
     """Top-level config for the RAG pipeline."""
 
     max_retries: int = field(default_factory=lambda: _env_int("MAX_RETRIES", 2))
+
+
+@dataclass(frozen=True)
+class MLOpsConfig:
+    """MLOps tracking settings."""
+
+    wandb_api_key: str = field(default_factory=lambda: _env("WANDB_API_KEY"))
+    wandb_project: str = field(
+        default_factory=lambda: _env("WANDB_PROJECT", "guarded-rag-system")
+    )
 
 
 @dataclass(frozen=True)
@@ -105,6 +121,7 @@ class Settings:
     chunking: ChunkingConfig = field(default_factory=ChunkingConfig)
     retriever: RetrieverConfig = field(default_factory=RetrieverConfig)
     rag: RAGConfig = field(default_factory=RAGConfig)
+    mlops: MLOpsConfig = field(default_factory=MLOpsConfig)
     project_root: Path = _PROJECT_ROOT
     documents_dir: Path = field(
         default_factory=lambda: _PROJECT_ROOT / "data" / "documents"
