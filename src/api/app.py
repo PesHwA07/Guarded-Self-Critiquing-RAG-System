@@ -126,6 +126,7 @@ async def health_check():
         retriever = _get_retriever()
         doc_count = retriever.count
         status = "ok" if doc_count > 0 else "degraded"
+        logger.debug(f"Health check: doc_count={doc_count}, status={status}")
     except Exception as exc:
         logger.error("Health check failed: %s", exc)
         doc_count = 0
