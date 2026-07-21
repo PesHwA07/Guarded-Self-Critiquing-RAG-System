@@ -115,7 +115,7 @@ app.add_middleware(
 
 
 @app.get("/health", response_model=HealthResponse, tags=["System"])
-async def health_check():
+async def health_check() -> HealthResponse:
     """Liveness and readiness probe.
 
     Returns service status, vector store info, and active configuration.
