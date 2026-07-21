@@ -242,6 +242,13 @@ The graph will automatically pick up these changes on the next query.
 
 ---
 
+## API Usage
+```bash
+curl -X POST http://localhost:8000/query \
+     -H "Content-Type: application/json" \
+     -d '{"question": "What is Pydantic?"}'
+```
+
 ## Live Demo
 - **Render Web Service:** `https://your-app-name.onrender.com/docs`
 
