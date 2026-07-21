@@ -29,3 +29,42 @@ def save_report(results: dict, filepath: str):
     """Save the full evaluation results (summary + details) to a JSON file."""
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
+
+
+def log_to_wandb(results: dict):
+    """Log the evaluation summary metrics to Weights & Biases."""
+    from config import settings
+    
+    if not settings.mlops.wandb_api_key:
+        print("[INFO] WANDB_API_KEY not set. Skipping W&B logging.")
+        return
+
+    import wandb
+    
+    print(f"\n[INFO] Logging metrics to W&B Project: {settings.mlops.wandb_project}...")
+    
+    # Initialize wandb run
+    wandb.init(
+        project=settings.mlops.wandb_project,
+        config={
+            "total_queries": results["summary"]["total_queries"],
+            "successful_queries": results["summary"]["successful_queries"],
+            "llm_provider": settings.llm.provider,
+            "vector_store": settings.retriever.vector_store
+        }
+    )
+    
+    # Log the summary metrics
+    wandb.log({
+        "hallucination_rate": results["summary"]["hallucination_rate"],
+        "average_relevancy": results["summary"]["average_relevancy"],
+        "latency_p50_sec": results["summary"]["latency_p50_sec"],
+        "latency_p95_sec": results["summary"]["latency_p95_sec"],
+        "cost_per_query": results["summary"]["cost_per_query"],
+        "total_estimated_cost": results["summary"]["total_estimated_cost"],
+        "average_faithfulness": results["summary"].get("average_faithfulness", 0.0)
+    })
+    
+    # Finish the run
+    wandb.finish()
+    print("[INFO] W&B logging complete.")
