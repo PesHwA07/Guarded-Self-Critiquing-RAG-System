@@ -296,7 +296,7 @@ this project was meant to close.*
 - [x] **Day 4: Environment Config** — Secure environment variables passed via `.env`, never baked into the image.
 - [x] **Day 5: Deployment** — Deploy free on **Hugging Face Spaces** (Docker SDK) or **Render** free tier.
 - [x] **Day 6: Smoke Test** — Test the deployed endpoint with `curl`/Postman to confirm guardrails and fallback work.
-- [ ] **Day 7: Docs & Launch** — Update README with architecture diagram, live demo link, and W&B link. Open PR for Week 8.
+- [x] **Day 7: Docs & Launch** — Update README with architecture diagram, live demo link, and W&B link. Open PR for Week 8.
 
 **Milestone:** a live, publicly reachable API endpoint answers questions correctly,
 respects guardrails, and its eval history is visible in W&B — the full loop, resume-ready.
