@@ -7,6 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: guarded-rag-api
+    restart: unless-stopped
     ports:
       - "8000:8000"
     # Pass through environment variables from the host or a .env file
