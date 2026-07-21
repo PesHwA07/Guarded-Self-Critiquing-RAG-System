@@ -1,0 +1,21 @@
+services:
+  # A Web Service for the Guarded RAG API
+  - type: web
+    name: guarded-rag-api
+    env: docker
+    region: oregon
+    plan: free # Can be upgraded to starter/standard later
+    # The command is built into the Dockerfile, but Render allows overriding
+    # We rely on the Dockerfile CMD ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    envVars:
+      - key: LLM_PROVIDER
+        value: groq
+      - key: VECTOR_STORE
+        value: qdrant
+      # Secrets that must be populated in the Render Dashboard:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false

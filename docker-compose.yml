@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # The Guarded RAG API Server
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: guarded-rag-api
+    ports:
+      - "8000:8000"
+    # Pass through environment variables from the host or a .env file
+    env_file:
+      - .env
+    environment:
+      # If using Qdrant via Docker Compose, override the URL to point to the local service
+      - VECTOR_STORE=${VECTOR_STORE:-chroma}
+      - QDRANT_URL=${QDRANT_URL:-http://qdrant:6333}
+    volumes:
+      # Persist ChromaDB data if using Chroma locally
+      - chroma_data:/app/data/chroma_db
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+
+  # Optional local Qdrant Vector Database
+  # (Only used if VECTOR_STORE=qdrant and QDRANT_URL=http://qdrant:6333)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant-db
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+volumes:
+  chroma_data:
+  qdrant_data:

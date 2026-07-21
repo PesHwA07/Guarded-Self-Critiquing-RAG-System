@@ -1,0 +1,43 @@
+# Version control
+.git/
+.github/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Environment (secrets — passed at runtime via --env-file)
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Local databases and caches
+data/chroma_db/
+data/sources/
+data/eval_history.db
+*.db
+wandb/
+eval_report.json
+model_cache/
+
+# Testing and linting caches
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Docs and planning
+*.md
+!README.md
+docs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
