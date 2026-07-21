@@ -16,6 +16,7 @@ services:
       # If using Qdrant via Docker Compose, override the URL to point to the local service
       - VECTOR_STORE=${VECTOR_STORE:-chroma}
       - QDRANT_URL=${QDRANT_URL:-http://qdrant:6333}
+      - API_HOST=0.0.0.0
     volumes:
       # Persist ChromaDB data if using Chroma locally
       - chroma_data:/app/data/chroma_db
