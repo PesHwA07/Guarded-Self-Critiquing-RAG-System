@@ -199,6 +199,25 @@ python -m streamlit run src/dashboard/app.py
 
 The pipeline also uses built-in **structured JSON logging** via `src/telemetry.py`, making it production-ready for log aggregation systems like Datadog or ELK.
 
+### Weights & Biases (W&B) MLOps Tracking
+In addition to the local SQLite dashboard, the automated evaluation pipeline tracks historical metrics in **Weights & Biases**. 
+When you run `run_eval.py`, it logs:
+- **Hallucination Rate** and **Relevancy**
+- **Latency (p50/p95)** and **Cost per Query**
+- Comparisons across multiple runs, giving you the full MLOps view for comparing offline prompt engineering iterations.
+
+Ensure you set `WANDB_API_KEY` and `WANDB_PROJECT` in your `.env` file to enable this.
+
+---
+
+## 🗄️ Vector Database Trade-offs
+
+This system supports both **ChromaDB** and **Qdrant** as vector stores, easily switchable via the `VECTOR_STORE` environment variable in your `.env` file (`VECTOR_STORE=chroma` or `VECTOR_STORE=qdrant`).
+
+**Why support both?**
+- **ChromaDB (Local):** Perfect for offline development, rapid prototyping, and CI testing. It runs entirely locally without any network latency or API keys.
+- **Qdrant (Cloud/Hosted):** Better suited for scaling to production. By using Qdrant's free cloud tier, the system can scale beyond a single machine, persisting a large document index centrally rather than duplicating the database locally for every developer or container.
+
 ---
 
 ## 🛡️ Extending Guardrail Policies
@@ -231,7 +250,7 @@ The graph will automatically pick up these changes on the next query.
 - [x] 📊 Week 4: Golden dataset + eval harness
 - [x] ⚙️ Week 5: CI/CD automation & SQLite Result Storage
 - [x] 📈 Week 6: Dashboard + polish
-- [ ] 🧠 Week 7: Vector database depth + MLOps tracking
+- [x] 🧠 Week 7: Vector database depth + MLOps tracking
 - [ ] 🚀 Week 8: Dockerize + deploy
 
 ---
