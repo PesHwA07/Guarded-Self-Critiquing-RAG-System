@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [v1.1.0] - 2026-07-21
+
+### Added
+- **Qdrant Vector Store Integration:** Added Qdrant as a second retriever backend, switchable via `VECTOR_STORE=chroma|qdrant` environment variable. Supports both Qdrant Cloud (free tier) and local in-memory mode.
+- **Weights & Biases MLOps Tracking:** Eval runs now automatically log hallucination rate, relevancy, faithfulness, latency (p50/p95), and cost per query to W&B for cross-run comparison.
+- **`MLOpsConfig`** in `src/config.py` for `WANDB_API_KEY` and `WANDB_PROJECT` settings.
+- **`log_to_wandb()`** in `src/eval/reporter.py` — gracefully skips if no API key is configured.
+- README sections documenting vector database trade-offs (ChromaDB vs Qdrant) and W&B integration.
+
+### Changed
+- **Refactored `retriever.py`:** Introduced `BaseRetriever` abstract class with `ChromaRetriever` and `QdrantRetriever` implementations behind a `get_retriever()` factory function.
+- **Updated `scripts/ingest.py` and `src/rag/graph.py`** to use the new retriever factory — fully vector-store agnostic.
+- Updated `.env.example` with Qdrant and W&B configuration variables.
+- Updated `.gitignore` to exclude `wandb/` directories and `eval_report.json`.
+
+---
+
 ## [v1.0.0] - 2026-07-19
 
 ### Added
