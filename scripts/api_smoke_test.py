@@ -25,3 +25,8 @@ def test_injection():
     assert r.json().get('error') is not None, 'Injection guard failed'
     print('Injection blocked successfully')
 
+if __name__ == '__main__':
+    test_health()
+    test_query()
+    test_injection()
+    print('All smoke tests passed!')
