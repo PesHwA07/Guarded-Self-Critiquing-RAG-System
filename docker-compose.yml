@@ -24,7 +24,6 @@ services:
       - chroma_data:/app/data/chroma_db
     depends_on:
       - qdrant
-    restart: unless-stopped
 
   # Optional local Qdrant Vector Database
   # (Only used if VECTOR_STORE=qdrant and QDRANT_URL=http://qdrant:6333)
