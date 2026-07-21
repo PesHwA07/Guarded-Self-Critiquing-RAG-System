@@ -42,6 +42,7 @@ SentenceTransformer('all-MiniLM-L6-v2')"
 # ---------- Stage 2: runtime ----------
 FROM python:3.11-slim AS runtime
 
+# Set working directory for runtime
 WORKDIR /app
 
 # Copy the pre-built venv from builder
