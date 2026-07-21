@@ -16,7 +16,6 @@ Usage::
 from __future__ import annotations
 
 import logging
-import os
 import sys
 import time
 from pathlib import Path
@@ -34,9 +33,9 @@ _PROJECT_ROOT = _SRC_DIR.parent                    # project root
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from config import settings
-from rag.graph import run_query, _get_retriever
-from telemetry import setup_telemetry
+from config import settings  # noqa: E402
+from rag.graph import _get_retriever, run_query  # noqa: E402
+from telemetry import setup_telemetry  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Telemetry — JSON structured logs for production

@@ -13,10 +13,9 @@ from __future__ import annotations
 
 import pytest
 from langchain_core.documents import Document
-
 from rag.retriever import (
     RetrievalResult,
-    VectorStoreRetriever,
+    ChromaRetriever,
     format_context,
 )
 
@@ -53,7 +52,7 @@ class FakeEmbeddingFunction:
 @pytest.fixture
 def retriever(tmp_path):
     """Create a retriever backed by a temp directory."""
-    return VectorStoreRetriever(
+    return ChromaRetriever(
         collection_name="test_collection",
         persist_directory=str(tmp_path / "chroma_test"),
         top_k=3,
