@@ -1,6 +1,9 @@
 # 🛡️ Guarded RAG System
 
-A **guarded, self-critiquing Retrieval-Augmented Generation (RAG) system** with automated evaluations — built with LangGraph, Groq, and ChromaDB.
+This is a **production-ready**, modular, and highly guarded Retrieval-Augmented Generation (RAG) system.
+
+### Architecture
+`Input -> [Presidio PII + Prompt Injection Guard] -> Retriever -> Generator -> Critic -> [Toxicity + Topic Guard] -> Output`** with automated evaluations — built with LangGraph, Groq, and ChromaDB.
 
 > **Zero cost.** Runs entirely on free-tier APIs and local models.
 
