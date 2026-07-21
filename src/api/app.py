@@ -90,9 +90,9 @@ class HealthResponse(BaseModel):
 app = FastAPI(
     title="Guarded RAG System",
     description=(
-        "A guarded, self-critiquing Retrieval-Augmented Generation API. "
-        "Input guardrails block PII / injection / jailbreaks. "
-        "A critic loop verifies answer groundedness before returning."
+        "A production-ready Guarded RAG API with self-critiquing logic. "
+        "Enforces PII/injection guardrails on input, and toxicity/topic rules on output. "
+        "Verifies answer groundedness before returning."
     ),
     version="1.1.0",
     docs_url="/docs",
