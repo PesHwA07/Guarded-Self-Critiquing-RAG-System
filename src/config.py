@@ -80,7 +80,7 @@ class RetrieverConfig:
     vector_store: Literal["chroma", "qdrant"] = field(
         default_factory=lambda: _env("VECTOR_STORE", "chroma")  # type: ignore[arg-type]
     )
-    
+
     top_k: int = field(default_factory=lambda: _env_int("TOP_K", 5))
     collection_name: str = field(
         default_factory=lambda: _env("CHROMA_COLLECTION", "rag_documents")

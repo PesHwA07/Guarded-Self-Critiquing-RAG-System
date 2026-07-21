@@ -33,10 +33,10 @@ from guardrails.policy_engine import load_policies
 from rag.critic import evaluate_answer
 from rag.generator import GeneratorResponse, generate_answer
 from rag.retriever import (
-    RetrievalResult,
     BaseRetriever,
-    get_retriever,
+    RetrievalResult,
     format_context,
+    get_retriever,
 )
 
 logger = logging.getLogger(__name__)
@@ -482,7 +482,7 @@ def run_query(
         # Default for production: JSON telemetry
         from telemetry import setup_telemetry
         setup_telemetry(json_format=True, level=logging.INFO)
-        
+
     logger.info("Starting run_query pipeline", extra={"metadata": {"question": question}})
 
 

@@ -34,15 +34,15 @@ def save_report(results: dict, filepath: str):
 def log_to_wandb(results: dict):
     """Log the evaluation summary metrics to Weights & Biases."""
     from config import settings
-    
+
     if not settings.mlops.wandb_api_key:
         print("[INFO] WANDB_API_KEY not set. Skipping W&B logging.")
         return
 
     import wandb
-    
+
     print(f"\n[INFO] Logging metrics to W&B Project: {settings.mlops.wandb_project}...")
-    
+
     # Initialize wandb run
     wandb.init(
         project=settings.mlops.wandb_project,
@@ -53,7 +53,7 @@ def log_to_wandb(results: dict):
             "vector_store": settings.retriever.vector_store
         }
     )
-    
+
     # Log the summary metrics
     wandb.log({
         "hallucination_rate": results["summary"]["hallucination_rate"],
@@ -64,7 +64,7 @@ def log_to_wandb(results: dict):
         "total_estimated_cost": results["summary"]["total_estimated_cost"],
         "average_faithfulness": results["summary"].get("average_faithfulness", 0.0)
     })
-    
+
     # Finish the run
     wandb.finish()
     print("[INFO] W&B logging complete.")

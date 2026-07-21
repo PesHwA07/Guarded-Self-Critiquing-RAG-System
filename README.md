@@ -88,7 +88,15 @@ graph TD;
 - Python 3.10+ (3.11 recommended)
 - A free [Groq API key](https://console.groq.com/keys)
 
-### Setup
+### Dashboard
+
+A Streamlit dashboard is provided for visualizing evaluation results and trends. Run it with:
+
+```bash
+streamlit run src/dashboard/app.py
+```
+
+## Setup
 
 ```bash
 # 1. Clone the repo

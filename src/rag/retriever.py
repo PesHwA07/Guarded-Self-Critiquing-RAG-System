@@ -21,9 +21,9 @@ from pathlib import Path
 from typing import Sequence
 
 import chromadb
+from langchain_core.documents import Document
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as rest
-from langchain_core.documents import Document
 
 from config import settings
 from rag.embedder import LocalEmbeddingFunction, get_embedding_function
@@ -172,14 +172,14 @@ class QdrantRetriever(BaseRetriever):
     def __post_init__(self) -> None:
         if self.embedding_fn is None:
             self.embedding_fn = get_embedding_function()
-        
+
         # If no URL is provided, fall back to an in-memory/local Qdrant setup for testing
         if not self.url:
             logger.warning("No QDRANT_URL found. Using in-memory Qdrant client.")
             self._client = QdrantClient(location=":memory:")
         else:
             self._client = QdrantClient(url=self.url, api_key=self.api_key)
-            
+
         # Ensure collection exists
         try:
             self._client.get_collection(self.collection_name)
@@ -187,7 +187,7 @@ class QdrantRetriever(BaseRetriever):
             # Get embedding dimension
             test_embedding = self.embedding_fn(["test"])[0]
             vector_size = len(test_embedding)
-            
+
             self._client.create_collection(
                 collection_name=self.collection_name,
                 vectors_config=rest.VectorParams(
@@ -204,7 +204,7 @@ class QdrantRetriever(BaseRetriever):
         for i in range(0, len(documents), batch_size):
             batch = documents[i : i + batch_size]
             points = []
-            
+
             texts = [doc.page_content for doc in batch]
             embeddings = self.embedding_fn(texts)
 
@@ -215,10 +215,10 @@ class QdrantRetriever(BaseRetriever):
                 import hashlib
                 doc_id_str = f"{source}::chunk_{chunk_idx}"
                 doc_id = hashlib.md5(doc_id_str.encode()).hexdigest()
-                
+
                 payload = doc.metadata.copy()
                 payload["page_content"] = doc.page_content
-                
+
                 points.append(
                     rest.PointStruct(
                         id=doc_id,
@@ -242,7 +242,7 @@ class QdrantRetriever(BaseRetriever):
             return []
 
         query_vector = self.embedding_fn([query])[0]
-        
+
         results = self._client.search(
             collection_name=self.collection_name,
             query_vector=query_vector,
@@ -273,10 +273,10 @@ class QdrantRetriever(BaseRetriever):
             self._client.delete_collection(self.collection_name)
         except Exception:
             pass
-            
+
         test_embedding = self.embedding_fn(["test"])[0]
         vector_size = len(test_embedding)
-        
+
         self._client.create_collection(
             collection_name=self.collection_name,
             vectors_config=rest.VectorParams(
