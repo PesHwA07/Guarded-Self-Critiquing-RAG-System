@@ -139,7 +139,7 @@ def _get_retriever() -> BaseRetriever:
     return _retriever
 
 def input_guard_node(state: RAGState) -> dict[str, Any]:
-    """Run input guardrails before retrieval."""
+    """Run input guardrails (injection, PII) before retrieval phase."""
     question = state["question"]
     logger.info("Running input guards...")
     _get_guards()
