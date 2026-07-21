@@ -264,7 +264,7 @@ curl -X POST http://localhost:8000/query \
 - [x] ⚙️ Week 5: CI/CD automation & SQLite Result Storage
 - [x] 📈 Week 6: Dashboard + polish
 - [x] 🧠 Week 7: Vector database depth + MLOps tracking
-- [ ] 🚀 Week 8: Dockerize + deploy
+- [x] 🚀 Week 8: Dockerize + deploy (FastAPI, Render, Smoke Tests)
 
 ---
 
