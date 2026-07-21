@@ -142,7 +142,7 @@ async def health_check() -> HealthResponse:
 
 
 @app.post("/query", response_model=QueryResponse, tags=["RAG"])
-async def query_endpoint(request: QueryRequest):
+async def query_endpoint(request: QueryRequest) -> QueryResponse:
     """Submit a question to the Guarded RAG pipeline.
 
     The pipeline runs through:
