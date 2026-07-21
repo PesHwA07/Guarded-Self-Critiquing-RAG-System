@@ -66,3 +66,7 @@ walkthrough.md
 
 # Ignore local implementation plans
 implementation_plan_v2.md
+
+# MLOps and Evals
+wandb/
+eval_report.json
