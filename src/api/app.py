@@ -108,6 +108,16 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def root():
+    """Root endpoint for the API.
+    
+    Returns a simple JSON payload to confirm the API is running
+    and accessible. Used by Render for health checks if needed.
+    """
+    return {"status": "ok", "message": "Guarded RAG System API is running."}
+
+
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------

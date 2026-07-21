@@ -26,7 +26,12 @@ def print_report(results: dict):
 
 
 def save_report(results: dict, filepath: str):
-    """Save the full evaluation results (summary + details) to a JSON file."""
+    """Save the full evaluation results (summary + details) to a JSON file.
+    
+    Args:
+        results: The complete dictionary of evaluation results including summary metrics.
+        filepath: Destination path for the output JSON file.
+    """
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
 
