@@ -300,7 +300,7 @@ def fallback_node(state: RAGState) -> dict[str, Any]:
 
 
 def output_guard_node(state: RAGState) -> dict[str, Any]:
-    """Run output guardrails on the final answer."""
+    """Run output guardrails (toxicity, topics) on the generated answer."""
     answer = state.get("answer", "")
     question = state.get("original_question") or state.get("question", "")
     logger.info("Running output guards...")
