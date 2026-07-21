@@ -82,7 +82,7 @@ graph TD;
 ## Quick Start
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.10+ (3.11 recommended)
 - A free [Groq API key](https://console.groq.com/keys)
 
 ### Setup
