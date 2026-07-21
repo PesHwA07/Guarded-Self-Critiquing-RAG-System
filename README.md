@@ -242,6 +242,9 @@ The graph will automatically pick up these changes on the next query.
 
 ---
 
+## Live Demo
+- **Render Web Service:** `https://your-app-name.onrender.com/docs`
+
 ## Development Status
 
 - [x] 📁 Week 1: Project scaffold & Linear RAG pipeline
