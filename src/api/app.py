@@ -161,6 +161,7 @@ async def query_endpoint(request: QueryRequest) -> QueryResponse:
         result = run_query(request.question, verbose=False)
     except Exception as exc:
         logger.error("Pipeline error: %s", exc, exc_info=True)
+        logger.error(f"Query endpoint failed: {str(exc)}")
         raise HTTPException(status_code=500, detail=f"Pipeline error: {str(exc)}")
     total_ms = (time.perf_counter() - start) * 1000
 
