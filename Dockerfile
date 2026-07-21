@@ -59,6 +59,8 @@ COPY data/policies.yaml ./data/policies.yaml
 COPY data/eval_config.yaml ./data/eval_config.yaml
 COPY data/golden_dataset.json ./data/golden_dataset.json
 COPY data/documents/ ./data/documents/
+# Copy test scripts
+COPY scripts/api_smoke_test.py ./scripts/api_smoke_test.py
 
 # Create directories for runtime data
 RUN mkdir -p data/chroma_db
