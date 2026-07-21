@@ -8,7 +8,7 @@ import yaml
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 from eval.dataset import load_dataset
-from eval.reporter import print_report, save_report
+from eval.reporter import print_report, save_report, log_to_wandb
 from eval.runner import run_evaluation
 from eval.storage import save_to_sqlite
 
@@ -99,6 +99,7 @@ def main():
     print_report(results)
     save_report(results, args.output)
     save_to_sqlite(results, mode=args.mode)
+    log_to_wandb(results)
     print(f"\n[DONE] Full report saved to {args.output} and SQLite DB")
 
     # 5. Quality gate check
