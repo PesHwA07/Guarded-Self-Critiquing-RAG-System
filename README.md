@@ -1,3 +1,12 @@
+---
+title: Guarded RAG System
+emoji: 🛡️
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # 🛡️ Guarded RAG System
 
 This is a **production-ready**, modular, and highly guarded Retrieval-Augmented Generation (RAG) system.
