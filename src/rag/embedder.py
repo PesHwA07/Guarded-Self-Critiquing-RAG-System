@@ -22,6 +22,15 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Sequence
+import logging
+
+try:
+    import spaces
+    HAS_SPACES = True
+except ImportError:
+    HAS_SPACES = False
+
+logger = logging.getLogger(__name__)
 
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -213,18 +222,38 @@ class LocalEmbeddingFunction:
         return f"local_sentence_transformers_{self.model_name}"
 
     def _ensure_model(self):
-        """Lazy-load the sentence-transformers model."""
+        """Lazy-load the sentence-transformers model on CPU first."""
         if self._model is None:
             from sentence_transformers import SentenceTransformer
 
-            # Force CPU. ZeroGPU makes torch.cuda.is_available() return True,
-            # but crashes if we use it without the @spaces.GPU decorator.
+            # Load model to CPU first, per ZeroGPU best practices.
             self._model = SentenceTransformer(self.model_name, device="cpu")
 
     def __call__(self, input: Sequence[str]) -> list[list[float]]:
         """Embed a list of texts. Compatible with ChromaDB's EmbeddingFunction protocol."""
         self._ensure_model()
-        embeddings = self._model.encode(list(input), show_progress_bar=False)
+        
+        texts = list(input)
+
+        if HAS_SPACES:
+            import torch
+            # Wrapper function for ZeroGPU execution
+            @spaces.GPU
+            def _gpu_encode(texts):
+                if torch.cuda.is_available():
+                    self._model.to("cuda")
+                return self._model.encode(texts, show_progress_bar=False)
+            
+            try:
+                embeddings = _gpu_encode(texts)
+            except Exception as e:
+                logger.warning("ZeroGPU embedding failed, falling back to CPU: %s", e)
+                self._model.to("cpu")
+                embeddings = self._model.encode(texts, show_progress_bar=False)
+        else:
+            # Local / normal execution (uses CPU since it was loaded on CPU, or whatever default)
+            embeddings = self._model.encode(texts, show_progress_bar=False)
+
         return embeddings.tolist()
 
     def embed_documents(self, documents: list[str]) -> list[list[float]]:
