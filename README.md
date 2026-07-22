@@ -1,13 +1,3 @@
----
-title: Guarded RAG System
-emoji: 🛡️
-colorFrom: blue
-colorTo: purple
-sdk: gradio
-app_file: src/api/app.py
-pinned: false
----
-
 # 🛡️ Guarded RAG System
 
 This is a **production-ready**, modular, and highly guarded Retrieval-Augmented Generation (RAG) system.
@@ -271,7 +261,8 @@ curl -X POST http://localhost:8000/query \
 ```
 
 ## Live Demo
-- **Render Web Service:** `https://your-app-name.onrender.com/docs`
+- **Local Web UI:** A fully interactive Gradio ChatInterface is mounted at the root (`http://localhost:8000/`) when you run the API!
+- **FastAPI Docs:** `http://localhost:8000/docs`
 
 ## Development Status
 
