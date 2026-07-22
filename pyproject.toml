@@ -51,6 +51,7 @@ dependencies = [
     # API Server
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.30.0",
+    "gradio>=4.0.0",
 
     # Hugging Face ZeroGPU support
     "spaces>=0.28.0",

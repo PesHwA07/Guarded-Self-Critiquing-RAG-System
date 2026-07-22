@@ -113,14 +113,8 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-def root():
-    """Root endpoint for the API.
-    
-    Returns a simple JSON payload to confirm the API is running
-    and accessible. Used by Render for health checks if needed.
-    """
-    return {"status": "ok", "message": "Guarded RAG System API is running."}
+# We will override the root endpoint with the Gradio UI mounted at `/`.
+# The health check remains at `/health`.
 
 
 # ---------------------------------------------------------------------------
@@ -190,9 +184,38 @@ async def query_endpoint(request: QueryRequest) -> QueryResponse:
     )
 
 # ---------------------------------------------------------------------------
-# HF Spaces Launch
+# Gradio UI Integration (for Hugging Face Spaces & ZeroGPU)
 # ---------------------------------------------------------------------------
-if __name__ == "__main__":
-    import uvicorn
-    # Hugging Face Spaces expects the app to listen on 0.0.0.0:7860
-    uvicorn.run(app, host="0.0.0.0", port=7860)
+
+try:
+    import gradio as gr
+    HAS_GRADIO = True
+except ImportError:
+    HAS_GRADIO = False
+
+if HAS_GRADIO:
+    def gradio_chat(message: str, history: list) -> str:
+        """Gradio ChatInterface backend."""
+        try:
+            result = run_query(message, verbose=False)
+            if result.get("error"):
+                return f"**Error:** {result['error']}"
+            
+            answer = result.get("answer", "(no answer)")
+            sources = result.get("sources_used", [])
+            if sources:
+                answer += f"\n\n*(Sources: {sources})*"
+                
+            return answer
+        except Exception as e:
+            return f"**System Error:** {str(e)}"
+
+    demo = gr.ChatInterface(
+        fn=gradio_chat,
+        title="🛡️ Guarded RAG System",
+        description="Ask questions about the documentation. Protected by PII and topic guardrails.",
+    )
+
+    # Mount Gradio app onto FastAPI at root path for HF Spaces compatibility.
+    # HF Spaces Gradio SDK expects to launch either `demo` or a FastAPI `app` that serves a UI.
+    app = gr.mount_gradio_app(app, demo, path="/")
