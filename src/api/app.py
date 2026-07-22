@@ -188,3 +188,11 @@ async def query_endpoint(request: QueryRequest) -> QueryResponse:
         latency_ms=round(result.get("latency_ms", total_ms), 1),
         error=result.get("error"),
     )
+
+# ---------------------------------------------------------------------------
+# HF Spaces Launch
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    import uvicorn
+    # Hugging Face Spaces expects the app to listen on 0.0.0.0:7860
+    uvicorn.run(app, host="0.0.0.0", port=7860)
