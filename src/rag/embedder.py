@@ -217,7 +217,9 @@ class LocalEmbeddingFunction:
         if self._model is None:
             from sentence_transformers import SentenceTransformer
 
-            self._model = SentenceTransformer(self.model_name)
+            # Force CPU. ZeroGPU makes torch.cuda.is_available() return True,
+            # but crashes if we use it without the @spaces.GPU decorator.
+            self._model = SentenceTransformer(self.model_name, device="cpu")
 
     def __call__(self, input: Sequence[str]) -> list[list[float]]:
         """Embed a list of texts. Compatible with ChromaDB's EmbeddingFunction protocol."""
