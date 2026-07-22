@@ -80,6 +80,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD python -c "import urllib.request, os; port = os.environ.get('PORT', '8000'); urllib.request.urlopen(f'http://localhost:{port}/health')" || exit 1
 
-# Run the FastAPI server using the PORT environment variable (default 8000)
-# Hugging Face Spaces uses port 7860 by default.
-CMD uvicorn src.api.app:app --host 0.0.0.0 --port ${PORT:-8000}
+# Run the FastAPI server using uvicorn on port 7860 (Hugging Face Spaces requirement)
+CMD exec uvicorn src.api.app:app --host 0.0.0.0 --port 7860 --workers 1
