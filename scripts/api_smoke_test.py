@@ -1,9 +1,8 @@
 """Smoke test for the FastAPI endpoints."""
-import sys
-import time
+import os
 import requests
 
-API_URL = 'http://localhost:8000'
+API_URL = os.environ.get("API_URL", "http://localhost:8000")
 
 def test_health():
     print('Testing /health...')

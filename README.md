@@ -3,7 +3,8 @@ title: Guarded RAG System
 emoji: 🛡️
 colorFrom: blue
 colorTo: purple
-sdk: docker
+sdk: gradio
+app_file: src/api/app.py
 pinned: false
 ---
 
