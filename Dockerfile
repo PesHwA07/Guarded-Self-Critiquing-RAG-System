@@ -23,9 +23,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a virtual environment inside the build stage
-RUN python -m venv /build/venv
-ENV PATH="/build/venv/bin:$PATH"
+# Create a virtual environment inside the build stage at the exact path
+# it will be copied to in the runtime stage, because venvs are not relocatable.
+RUN python -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
 
 # Install Python dependencies first (cache-friendly layer)
 COPY pyproject.toml ./
@@ -46,7 +47,7 @@ FROM python:3.11-slim AS runtime
 WORKDIR /app
 
 # Copy the pre-built venv from builder
-COPY --from=builder /build/venv /app/venv
+COPY --from=builder /app/venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
 # Copy the pre-downloaded model cache from builder
