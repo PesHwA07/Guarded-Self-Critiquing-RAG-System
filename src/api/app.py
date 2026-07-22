@@ -15,6 +15,11 @@ Usage::
 
 from __future__ import annotations
 
+try:
+    import spaces  # type: ignore
+except ImportError:
+    pass
+
 import logging
 import sys
 import time
